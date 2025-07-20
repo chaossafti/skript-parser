@@ -7,9 +7,11 @@ import io.github.syst3ms.skriptparser.parsing.ParserState;
 import io.github.syst3ms.skriptparser.parsing.ScriptLoader;
 import org.jetbrains.annotations.Contract;
 
+import javax.annotation.OverridingMethodsMustInvokeSuper;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * It is important to note that Conditional is the only section to be understood
@@ -61,6 +63,12 @@ public abstract class CodeSection extends Statement {
         last = items.isEmpty() ? null : items.get(items.size() - 1).setNext(getNext().orElse(null));
     }
 
+    @Override
+    @OverridingMethodsMustInvokeSuper
+    public void onUnload() {
+        getItems().forEach(SyntaxElement::onUnload);
+    }
+
     /**
      * The items returned by this method are not representative of the execution of the code, meaning that all items
      * in the list may not be all executed. The list should rather be considered as a flat view of all the lines inside the
@@ -88,21 +96,21 @@ public abstract class CodeSection extends Statement {
     }
 
     /**
-     * A list of the classes of every syntax that is allowed to be used inside of this CodeSection. The default behavior
-     * is to return an empty list, which equates to no restrictions. If overriden, this allows the creation of specialized,
+     * A set of the classes of every syntax that is allowed to be used inside of this CodeSection. The default behavior
+     * is to return an empty set, which equates to no restrictions. If overriden, this allows the creation of specialized,
      * DSL-like sections in which only select {@linkplain Statement statements} and other {@linkplain CodeSection sections}
      * (and potentially, but not necessarily, expressions).
-     * @return a list of the classes of each syntax allowed inside this CodeSection
+     * @return a set of the classes of each syntax allowed inside this CodeSection
      * @see #isRestrictingExpressions()
      */
-    protected List<Class<? extends SyntaxElement>> getAllowedSyntaxes() {
-        return Collections.emptyList();
+    protected Set<Class<? extends SyntaxElement>> getAllowedSyntaxes() {
+        return Collections.emptySet();
     }
 
     /**
      * Whether the syntax restrictions outlined in {@link #getAllowedSyntaxes()} should also apply to expressions.
      * This is usually undesirable, so it is false by default.
-     *
+     * <p>
      * This should return true <b>if and only if</b> {@link #getAllowedSyntaxes()} contains an {@linkplain Expression} class.
      * @return whether the use of expressions is also restricted by {@link #getAllowedSyntaxes()}. False by default.
      */

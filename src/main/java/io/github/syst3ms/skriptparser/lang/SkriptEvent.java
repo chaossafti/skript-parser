@@ -1,12 +1,16 @@
 package io.github.syst3ms.skriptparser.lang;
 
 import io.github.syst3ms.skriptparser.file.FileSection;
+import io.github.syst3ms.skriptparser.lang.event.SkriptEventManager;
+import io.github.syst3ms.skriptparser.lang.event.TriggerEventHandler;
 import io.github.syst3ms.skriptparser.log.SkriptLogger;
 import io.github.syst3ms.skriptparser.parsing.ParserState;
 import io.github.syst3ms.skriptparser.parsing.ScriptLoader;
 
+import javax.annotation.OverridingMethodsMustInvokeSuper;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 /**
  * The entry point for all code in Skript. Once an event triggers, all of the code inside it may be run.
@@ -23,6 +27,31 @@ import java.util.List;
  * </ul>
  */
 public abstract class SkriptEvent implements SyntaxElement {
+    private TriggerEventHandler eventHandler;
+
+    /**
+     * Creates an event handler for this event and registers it to an event manager.
+     * @param trigger The trigger to execute when this event is executed
+     * @param eventManager The event Manager to register this event on
+     */
+    public void register(Trigger trigger, SkriptEventManager eventManager) {
+        eventHandler = eventManager.registerTrigger(getClass(), trigger, this::check);
+
+    }
+
+    /**
+     * Removes this event handler from the event manager. This method also removes the previous event handler attached to this event.
+     */
+    public void unregister() {
+        if(eventHandler == null) {
+            return;
+        }
+
+        eventHandler.getAttachedEventManager().removeEventHandler(getClass(), eventHandler);
+        this.eventHandler = null;
+    }
+
+
 
     /**
      * Whether this event should trigger, given the {@link TriggerContext}
@@ -49,6 +78,19 @@ public abstract class SkriptEvent implements SyntaxElement {
         return 0;
     }
 
+    @Override
+    @OverridingMethodsMustInvokeSuper
+    public void onUnload() {
+        // call onUnload on child syntaxes
+        if(eventHandler != null) {
+            eventHandler.getTrigger().onUnload();
+        }
+
+
+        // we have to unregister last because it sets eventHandler to null
+        unregister();
+    }
+
     /**
      * A list of the classes of every syntax that is allowed to be used inside of this SkriptEvent. The default behavior
      * is to return an empty list, which equates to no restrictions. If overriden, this allows the creation of specialized,
@@ -57,8 +99,8 @@ public abstract class SkriptEvent implements SyntaxElement {
      * @return a list of the classes of each syntax allowed inside this SkriptEvent
      * @see #isRestrictingExpressions()
      */
-    protected List<Class<? extends SyntaxElement>> getAllowedSyntaxes() {
-        return Collections.emptyList();
+    protected Set<Class<? extends SyntaxElement>> getAllowedSyntaxes() {
+        return Collections.emptySet();
     }
 
     /**

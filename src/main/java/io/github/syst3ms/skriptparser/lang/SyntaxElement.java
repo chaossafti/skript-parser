@@ -39,8 +39,16 @@ public interface SyntaxElement {
     String toString(@Nullable TriggerContext ctx, boolean debug);
 
     /**
+     * This method is invoked whenever this Syntax element is unloaded.
+     * Can be optionally overridden.
+     */
+    default void onUnload() {
+
+    }
+
+    /**
      * Checks whether this syntax element is inside of specific given {@link CodeSection}s.
-     *
+     * <p>
      * This method shouldn't be used for {@linkplain SyntaxElement}s that should only work with specific {@link TriggerContext}s.
      * For this purpose, prefer {@link ParseContext#getParserState()} used in conjunction with {@link ParserState#getCurrentContexts()}.
      * @param parseContext the parser context

@@ -75,7 +75,7 @@ public class SyntaxParser {
     /**
      * All {@link SkriptEvent events} that are successfully parsed during parsing, in order of last successful parsing
      */
-    private static final RecentElementList<SkriptEventInfo<?>> recentEvents = new RecentElementList<>();
+    private static final RecentElementList<SkriptEventInfo<?>> RECENT_EVENTS = new RecentElementList<>();
     /**
      * All {@link Expression expressions} that are successfully parsed during parsing, in order of last successful parsing
      */
@@ -191,18 +191,18 @@ public class SyntaxParser {
             var expr = (Optional<? extends Expression<Boolean>>) matchExpressionInfo(s, info, BOOLEAN_PATTERN_TYPE, parserState, logger);
             if(expr.isPresent()) {
                 switch (conditional) {
-                    case 0: // Can't be conditional
+                    case NOT_CONDITIONAL: // Can't be conditional
                         if(ConditionalExpression.class.isAssignableFrom(expr.get().getClass())) {
                             logger.error("The boolean expression must not be conditional", ErrorType.SEMANTIC_ERROR);
                             return Optional.empty();
                         }
                         break;
-                    case 2: // Has to be conditional
+                    case CONDITIONAL: // Has to be conditional
                         if(!ConditionalExpression.class.isAssignableFrom(expr.get().getClass())) {
                             logger.error("The boolean expression must be conditional", ErrorType.SEMANTIC_ERROR);
                             return Optional.empty();
                         }
-                    case 1: // Can be conditional
+                    case MAYBE_CONDITIONAL: // Can be conditional
                         if(ConditionalExpression.class.isAssignableFrom(expr.get().getClass())) {
                             recentConditions.acknowledge((ExpressionInfo<? extends ConditionalExpression, ? extends Boolean>) info);
                         }
@@ -224,18 +224,18 @@ public class SyntaxParser {
             var expr = (Optional<? extends Expression<Boolean>>) matchExpressionInfo(s, info, BOOLEAN_PATTERN_TYPE, parserState, logger);
             if(expr.isPresent()) {
                 switch (conditional) {
-                    case 0: // Can't be conditional
+                    case NOT_CONDITIONAL: // Can't be conditional
                         if(ConditionalExpression.class.isAssignableFrom(expr.get().getClass())) {
                             logger.error("The boolean expression must not be conditional", ErrorType.SEMANTIC_ERROR);
                             return Optional.empty();
                         }
                         break;
-                    case 2: // Has to be conditional
+                    case CONDITIONAL: // Has to be conditional
                         if(!ConditionalExpression.class.isAssignableFrom(expr.get().getClass())) {
                             logger.error("The boolean expression must be conditional", ErrorType.SEMANTIC_ERROR);
                             return Optional.empty();
                         }
-                    case 1: // Can be conditional
+                    case MAYBE_CONDITIONAL: // Can be conditional
                         if(ConditionalExpression.class.isAssignableFrom(expr.get().getClass())) {
                             recentConditions.acknowledge((ExpressionInfo<? extends ConditionalExpression, ? extends Boolean>) info);
                         }
@@ -655,22 +655,24 @@ public class SyntaxParser {
     public static Optional<? extends UnloadedTrigger> parseTrigger(FileSection section, SkriptLogger logger) {
         if(section.getLineContent().isEmpty())
             return Optional.empty();
-        for (var recentEvent : recentEvents) {
+        for (var recentEvent : RECENT_EVENTS) {
             var trigger = matchEventInfo(section, recentEvent, logger);
             if(trigger.isPresent()) {
-                recentEvents.acknowledge(recentEvent);
+                RECENT_EVENTS.acknowledge(recentEvent);
                 logger.clearLogs();
                 return trigger;
             }
             logger.forgetError();
         }
+
         // Let's not loop over the same elements again
         var remainingEvents = SyntaxManager.getEvents();
-        recentEvents.removeFrom(remainingEvents);
+        RECENT_EVENTS.removeFrom(remainingEvents);
+
         for (var remainingEvent : remainingEvents) {
             var trigger = matchEventInfo(section, remainingEvent, logger);
             if(trigger.isPresent()) {
-                recentEvents.acknowledge(remainingEvent);
+                RECENT_EVENTS.acknowledge(remainingEvent);
                 logger.clearLogs();
                 return trigger;
             }

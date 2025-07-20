@@ -1,5 +1,6 @@
 package io.github.syst3ms.skriptparser.log;
 
+import io.github.syst3ms.skriptparser.parsing.script.Script;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -13,13 +14,19 @@ public class LogEntry {
     private final int line;
     private final List<ErrorContext> errorContext;
     private final ErrorType errorType;
+    private final Script script;
 
-    public LogEntry(String message, LogType verbosity, int line, List<ErrorContext> errorContext, @Nullable ErrorType errorType) {
+    public LogEntry(String message, LogType verbosity, int line, List<ErrorContext> errorContext, @Nullable ErrorType errorType, Script script) {
         this.type = verbosity;
         this.message = message;
         this.line = line;
         this.errorContext = errorContext;
         this.errorType = errorType;
+        this.script = script;
+    }
+
+    public Script getScript() {
+        return script;
     }
 
     public String getMessage() {

@@ -5,55 +5,126 @@ import io.github.syst3ms.skriptparser.file.FileParser;
 import io.github.syst3ms.skriptparser.file.FileSection;
 import io.github.syst3ms.skriptparser.file.VoidElement;
 import io.github.syst3ms.skriptparser.lang.*;
+import io.github.syst3ms.skriptparser.lang.event.SkriptEventManager;
 import io.github.syst3ms.skriptparser.log.ErrorContext;
 import io.github.syst3ms.skriptparser.log.ErrorType;
-import io.github.syst3ms.skriptparser.log.LogEntry;
 import io.github.syst3ms.skriptparser.log.SkriptLogger;
+import io.github.syst3ms.skriptparser.parsing.script.Script;
+import io.github.syst3ms.skriptparser.parsing.script.ScriptLoadResult;
 import io.github.syst3ms.skriptparser.util.FileUtils;
-import io.github.syst3ms.skriptparser.util.MultiMap;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.stream.Collectors;
 
 /**
  * Contains the logic for loading, parsing and interpreting entire script files
  */
 public class ScriptLoader {
-    private static final MultiMap<String, Trigger> triggerMap = new MultiMap<>();
+    // using ConcurrentHashMap here to support async script loading in the future
+    private static final ConcurrentMap<Path, Script> LOADED_SCRIPTS = new ConcurrentHashMap<>();
+
+    public static ScriptLoadResult getOrLoadScript(Path scriptPath, boolean debug) {
+        if(LOADED_SCRIPTS.containsKey(scriptPath)) {
+            return new ScriptLoadResult(LOADED_SCRIPTS.get(scriptPath));
+        }
+
+        return loadScript(scriptPath, debug);
+    }
+
+    public static Optional<Script> getScript(Path path) {
+        return Optional.ofNullable(LOADED_SCRIPTS.get(path));
+    }
+
 
     /**
-     * Parses and loads the provided script in memory
+     * Loads a Script. If the given script is already loaded, it will simply return without loading again
      *
-     * @param scriptPath the script file to load
-     * @param debug      whether debug is enabled
+     * @param path  The path to the script
+     * @param debug flag if debug mode should be used.
+     * @return The ScriptLoadResult, containing the script and the logs.
      */
-    public static List<LogEntry> loadScript(Path scriptPath, boolean debug) {
-        var parser = new FileParser();
+    public static ScriptLoadResult loadScript(@NotNull Path path, boolean debug) {
         var logger = new SkriptLogger(debug);
-        List<FileElement> elements;
-        String scriptName;
 
-        // read and parse file content
-        try {
-            var lines = FileUtils.readAllLines(scriptPath);
-            scriptName = scriptPath.getFileName().toString().replaceAll("(.+)\\..+", "$1");
-            elements = parser.parseFileLines(scriptName,
-                    lines,
-                    0,
-                    1,
-                    logger
-            );
-            logger.logOutput();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return Collections.emptyList();
+        Script script;
+        // make sure we don't have a script at the path already loaded
+        if(getScript(path).isPresent()) {
+            // if we do, check if its loaded
+            script = getScript(path).get();
+            if(script.isLoaded()) {
+                // loaded scripts will directly return - we don't need to load them no more
+                return new ScriptLoadResult(script);
+            }
+        } else {
+            // create a new Script instance if there is no Script already present.
+            String scriptName = path.getFileName().toString().replaceAll("(.+)\\..+", "$1");
+            script = new Script(null, path, scriptName);
+            LOADED_SCRIPTS.put(path, script);
         }
 
 
-        logger.setFileInfo(scriptPath.getFileName().toString(), elements);
+        // load the elements into the script
+        return loadScript(script, logger);
+    }
+
+
+    /**
+     * Loads FileElements into a script. This is only possible if the script is unloaded.
+     * Instead of using this method, you should use {@link Script#reload()} or {@link #getOrLoadScript(Path, boolean)}
+     *
+     * @param script The script to load the elements into
+     * @param logger the logger to direct logs to
+     * @return a ScriptLoadResult containing the Script as well as all lgs
+     * @see Script#reload()
+     * @see #getOrLoadScript(Path, boolean)
+     */
+    public static ScriptLoadResult loadScript(@NotNull Script script, SkriptLogger logger) {
+
+        // read the file and parse the elements
+        var parser = new FileParser();
+        List<String> lines;
+
+        // read the liens within the file
+        try {
+            lines = FileUtils.readAllLines(script.getPath());
+            logger.logOutput();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new ScriptLoadResult(null);
+        }
+
+        // parse the lines into FileElements
+        List<FileElement> elements = parser.parseFileLines(script.getName(),
+                lines,
+                0,
+                1,
+                logger
+        );
+
+        return loadScript(script, elements, logger);
+    }
+
+    /**
+     * Loads FileElements into a script. This is only possible if the script is unloaded.
+     * Instead of using this method, you should use {@link Script#reload()} or {@link #getOrLoadScript(Path, boolean)}
+     *
+     * @param script   The script to load the elements into
+     * @param elements The elements to load into the script.
+     * @return a ScriptLoadResult containing the Script as well as all lgs
+     * @see Script#reload()
+     * @see #getOrLoadScript(Path, boolean)
+     */
+    public static ScriptLoadResult loadScript(@NotNull Script script, @NotNull List<FileElement> elements, SkriptLogger logger) {
+        if(script.isLoaded()) {
+            throw new IllegalStateException("Tried loading elements into a loaded script file!");
+        }
+
+        logger.setFileInfo(script, elements);
         List<UnloadedTrigger> unloadedTriggers = new ArrayList<>();
 
 
@@ -93,10 +164,20 @@ public class ScriptLoader {
             // Why does the addon handle trigger handling???
             // what's the point of init method??
             unloaded.getEventInfo().getRegisterer().handleTrigger(loaded);
-            triggerMap.putOne(scriptName, loaded);
+
+            loaded.getEvent().register(loaded, SkriptEventManager.GLOBAL_EVENT_MANAGER);
         }
+
+        // finally, load the script with its new set of triggers.
+        Set<Trigger> triggers = unloadedTriggers
+                .stream()
+                .map(UnloadedTrigger::getTrigger)
+                .collect(Collectors.toUnmodifiableSet());
+
+        script.load(triggers);
+
         logger.logOutput();
-        return logger.close();
+        return new ScriptLoadResult(logger.close(), script);
     }
 
     /**
@@ -130,7 +211,7 @@ public class ScriptLoader {
                         logger.error("Conditionals are not allowed in this section", ErrorType.SEMANTIC_ERROR);
                     }
                 } else if(content.regionMatches(true, 0, "else if ", 0, "else if ".length())) {
-                    if(items.size() == 0 ||
+                    if(items.isEmpty() ||
                             !(items.get(items.size() - 1) instanceof Conditional) ||
                             ((Conditional) items.get(items.size() - 1)).getMode() == Conditional.ConditionalMode.ELSE) {
                         logger.error("An 'else if' must be placed after an 'if'", ErrorType.STRUCTURE_ERROR);
@@ -151,7 +232,7 @@ public class ScriptLoader {
                         logger.error("Conditionals are not allowed in this section", ErrorType.SEMANTIC_ERROR);
                     }
                 } else if(content.equalsIgnoreCase("else")) {
-                    if(items.size() == 0 ||
+                    if(items.isEmpty() ||
                             !(items.get(items.size() - 1) instanceof Conditional) ||
                             ((Conditional) items.get(items.size() - 1)).getMode() == Conditional.ConditionalMode.ELSE) {
                         logger.error("An 'else' must be placed after an 'if' or an 'else if'", ErrorType.STRUCTURE_ERROR);
@@ -185,9 +266,5 @@ public class ScriptLoader {
         }
         logger.callback();
         return items;
-    }
-
-    public static MultiMap<String, Trigger> getTriggerMap() {
-        return triggerMap;
     }
 }

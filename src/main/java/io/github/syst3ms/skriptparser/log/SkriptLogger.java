@@ -2,6 +2,7 @@ package io.github.syst3ms.skriptparser.log;
 
 import io.github.syst3ms.skriptparser.file.FileElement;
 import io.github.syst3ms.skriptparser.file.FileSection;
+import io.github.syst3ms.skriptparser.parsing.script.Script;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -55,7 +56,7 @@ public class SkriptLogger {
     private boolean hasError = false;
     private final LinkedList<ErrorContext> errorContext = new LinkedList<>();
     // File
-    private String fileName;
+    private Script script;
     private List<FileElement> fileElements;
     private int line = -1;
     // Logs
@@ -73,11 +74,11 @@ public class SkriptLogger {
 
     /**
      * Provides the logger information about the file it's currently parsing
-     * @param fileName the file name
+     * @param script the current script
      * @param fileElements the {@link FileElement}s of the current file
      */
-    public void setFileInfo(String fileName, List<FileElement> fileElements) {
-        this.fileName = fileName;
+    public void setFileInfo(Script script, List<FileElement> fileElements) {
+        this.script = script;
         this.fileElements = flatten(fileElements);
     }
 
@@ -144,9 +145,9 @@ public class SkriptLogger {
         if (open) {
             List<ErrorContext> ctx = new ArrayList<>(errorContext);
             if (line == -1) {
-                logEntries.add(new LogEntry(message, type, line, ctx, error));
+                logEntries.add(new LogEntry(message, type, line, ctx, error, script));
             } else {
-                logEntries.add(new LogEntry(String.format(LOG_FORMAT, message, line + 1, fileElements.get(line).getLineContent(), fileName), type, line, ctx, error));
+                logEntries.add(new LogEntry(String.format(LOG_FORMAT, message, line + 1, fileElements.get(line).getLineContent(), script.getName()), type, line, ctx, error, script));
             }
         }
     }

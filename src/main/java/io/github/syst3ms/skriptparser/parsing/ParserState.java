@@ -7,6 +7,7 @@ import io.github.syst3ms.skriptparser.lang.TriggerContext;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * An object that stores data about the current parsing, on the scale of the entire trigger.
@@ -14,7 +15,7 @@ import java.util.List;
 public class ParserState {
     private Class<? extends TriggerContext>[] currentContexts;
     private final LinkedList<CodeSection> currentSections = new LinkedList<>();
-    private List<Class<? extends SyntaxElement>> allowedSyntaxes = Collections.emptyList();
+    private Set<Class<? extends SyntaxElement>> allowedSyntaxes = Collections.emptySet();
     private boolean restrictingExpressions = false;
 
     /**
@@ -59,7 +60,7 @@ public class ParserState {
      * @param allowedSyntaxes all allowed syntaxes
      * @param restrictingExpressions whether expressions are also restricted
      */
-    public void setSyntaxRestrictions(List<Class<? extends SyntaxElement>> allowedSyntaxes, boolean restrictingExpressions) {
+    public void setSyntaxRestrictions(Set<Class<? extends SyntaxElement>> allowedSyntaxes, boolean restrictingExpressions) {
         this.allowedSyntaxes = allowedSyntaxes;
         this.restrictingExpressions = restrictingExpressions;
     }
@@ -68,7 +69,7 @@ public class ParserState {
      * Clears the previously enforced syntax restrictions
      */
     public void clearSyntaxRestrictions() {
-        allowedSyntaxes = Collections.emptyList();
+        allowedSyntaxes = Collections.emptySet();
         restrictingExpressions = false;
     }
 
