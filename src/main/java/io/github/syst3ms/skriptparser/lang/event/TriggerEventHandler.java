@@ -1,5 +1,6 @@
 package io.github.syst3ms.skriptparser.lang.event;
 
+import io.github.syst3ms.skriptparser.lang.Statement;
 import io.github.syst3ms.skriptparser.lang.Trigger;
 import io.github.syst3ms.skriptparser.lang.TriggerContext;
 import org.jetbrains.annotations.NotNull;
@@ -28,7 +29,7 @@ public class TriggerEventHandler implements SkriptEventHandler {
 
     @Override
     public void handle(TriggerContext context) {
-        trigger.walk(context);
+        Statement.runAll(trigger, context);
     }
 
 
