@@ -1,7 +1,12 @@
 package io.github.syst3ms.skriptparser.pattern;
 
+import io.github.syst3ms.skriptparser.log.SkriptLogger;
 import io.github.syst3ms.skriptparser.parsing.MatchContext;
+import io.github.syst3ms.skriptparser.parsing.ParserState;
 import org.jetbrains.annotations.Nullable;
+
+import java.math.MathContext;
+import java.util.Optional;
 
 /**
  * Text inside of a pattern. Is case and whitespace insensitive.
@@ -24,28 +29,42 @@ public class TextElement implements PatternElement {
 
     @Override
     public int match(String s, int index, MatchContext context) {
-        if (text.isEmpty())
-            return index;
-        var start = 0;
+        if (text.isEmpty()) return index;
+
+        String stripped = text.strip();
+        int pos = index;
+
+        // Handle leading whitespace
         if (Character.isWhitespace(text.charAt(0))) {
-            start = s.length() - s.stripLeading().length();
+            while (pos < s.length() && Character.isWhitespace(s.charAt(pos))) {
+                pos++;
+            }
         }
-        var end = 0;
-        if (Character.isWhitespace(text.charAt(text.length() - 1))) {
-            end = s.length() - s.stripTrailing().length();
-        }
-        var stripped = text.strip();
-        // We advance until we reach the first non-whitespace character in s
-        if (index + start + stripped.length() > s.length()) {
-            return -1;
-        }
+
+        // Check if stripped text fits
         if (stripped.isEmpty()) {
-            return index + start;
-        } else if (s.regionMatches(true, index + start, stripped, 0, stripped.length())) {
-            return index + start + stripped.length() + end; // Adjusting for some of the whitespace we ignored
-        } else {
+            return pos; // nothing to match, just whitespace
+        }
+
+        if (pos + stripped.length() > s.length()) {
             return -1;
         }
+
+        // Main match (case-insensitive)
+        if (!s.regionMatches(true, pos, stripped, 0, stripped.length())) {
+            return -1;
+        }
+
+        pos += stripped.length();
+
+        // Handle trailing whitespace
+        if (Character.isWhitespace(text.charAt(text.length() - 1))) {
+            while (pos < s.length() && Character.isWhitespace(s.charAt(pos))) {
+                pos++;
+            }
+        }
+
+        return pos;
     }
 
     @Override
