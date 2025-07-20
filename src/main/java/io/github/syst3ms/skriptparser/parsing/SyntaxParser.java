@@ -6,6 +6,7 @@ import io.github.syst3ms.skriptparser.lang.base.ConditionalExpression;
 import io.github.syst3ms.skriptparser.log.ErrorContext;
 import io.github.syst3ms.skriptparser.log.ErrorType;
 import io.github.syst3ms.skriptparser.log.SkriptLogger;
+import io.github.syst3ms.skriptparser.pattern.PatternElement;
 import io.github.syst3ms.skriptparser.registration.ExpressionInfo;
 import io.github.syst3ms.skriptparser.registration.SkriptEventInfo;
 import io.github.syst3ms.skriptparser.registration.SyntaxInfo;
@@ -33,16 +34,19 @@ import java.util.regex.Pattern;
 public class SyntaxParser {
     /**
      * Tells {@link #parseBooleanExpression(String, int, ParserState, SkriptLogger)} to only return expressions that are not conditional
+     *
      * @see #parseBooleanExpression(String, int, ParserState, SkriptLogger)
      */
     public static final int NOT_CONDITIONAL = 0;
     /**
      * Tells {@link #parseBooleanExpression(String, int, ParserState, SkriptLogger)} to return any expressions, conditional or not
+     *
      * @see #parseBooleanExpression(String, int, ParserState, SkriptLogger)
      */
     public static final int MAYBE_CONDITIONAL = 1;
     /**
      * Tells {@link #parseBooleanExpression(String, int, ParserState, SkriptLogger)} to only return conditional expressions
+     *
      * @see #parseBooleanExpression(String, int, ParserState, SkriptLogger)
      */
     public static final int CONDITIONAL = 2;
@@ -83,28 +87,29 @@ public class SyntaxParser {
 
     /**
      * Parses an {@link Expression} from the given {@linkplain String} and {@link PatternType expected return type}
-     * @param <T> the type of the expression
-     * @param s the string to be parsed as an expression
+     *
+     * @param <T>          the type of the expression
+     * @param s            the string to be parsed as an expression
      * @param expectedType the expected return type
-     * @param parserState the current parser state
-     * @param logger the logger
+     * @param parserState  the current parser state
+     * @param logger       the logger
      * @return an expression that was successfully parsed, or {@literal null} if the string is empty,
      * no match was found
      * or for another reason detailed in an error message.
      */
     public static <T> Optional<? extends Expression<? extends T>> parseExpression(String s, PatternType<T> expectedType, ParserState parserState, SkriptLogger logger) {
-        if (s.isEmpty())
+        if(s.isEmpty())
             return Optional.empty();
-        if (s.startsWith("(") && s.endsWith(")") && StringUtils.findClosingIndex(s, '(', ')', 0) == s.length() - 1) {
+        if(s.startsWith("(") && s.endsWith(")") && StringUtils.findClosingIndex(s, '(', ')', 0) == s.length() - 1) {
             s = s.substring(1, s.length() - 1);
         }
         var literal = parseLiteral(s, expectedType, parserState, logger);
-        if (literal.isPresent()) {
+        if(literal.isPresent()) {
             return literal;
         }
         var variable = (Optional<? extends Variable<? extends T>>) Variables.parseVariable(s, expectedType.getType().getTypeClass(), parserState, logger);
-        if (variable.isPresent()) {
-            if (variable.filter(v -> !v.isSingle() && expectedType.isSingle()).isPresent()) {
+        if(variable.isPresent()) {
+            if(variable.filter(v -> !v.isSingle() && expectedType.isSingle()).isPresent()) {
                 logger.error("A single value was expected, but " +
                         s +
                         " represents multiple values.", ErrorType.SEMANTIC_ERROR);
@@ -113,15 +118,15 @@ public class SyntaxParser {
                 return variable;
             }
         }
-        if (!expectedType.isSingle()) {
+        if(!expectedType.isSingle()) {
             var listLiteral = parseListLiteral(s, expectedType, parserState, logger);
-            if (listLiteral.isPresent()) {
+            if(listLiteral.isPresent()) {
                 return listLiteral;
             }
         }
         for (var info : recentExpressions) {
             var expr = matchExpressionInfo(s, info, expectedType, parserState, logger);
-            if (expr.isPresent()) {
+            if(expr.isPresent()) {
                 recentExpressions.acknowledge(info);
                 logger.clearLogs();
                 return expr;
@@ -133,7 +138,7 @@ public class SyntaxParser {
         recentExpressions.removeFrom(remainingExpressions);
         for (var info : remainingExpressions) {
             var expr = matchExpressionInfo(s, info, expectedType, parserState, logger);
-            if (expr.isPresent()) {
+            if(expr.isPresent()) {
                 recentExpressions.acknowledge(info);
                 logger.clearLogs();
                 return expr;
@@ -147,30 +152,31 @@ public class SyntaxParser {
 
     /**
      * Parses a {@link Expression boolean expression} from the given {@linkplain String}
-     * @param s the string to be parsed as an expression
+     *
+     * @param s           the string to be parsed as an expression
      * @param conditional a constant describing whether the result can be a {@link ConditionalExpression condition}
      * @param parserState the current parser state
-     * @param logger the logger
-     * @see SyntaxParser#NOT_CONDITIONAL
-     * @see SyntaxParser#MAYBE_CONDITIONAL
-     * @see SyntaxParser#CONDITIONAL
+     * @param logger      the logger
      * @return a boolean expression that was successfully parsed, or {@literal null} if the string is empty,
      * no match was found
      * or for another reason detailed in an error message.
+     * @see SyntaxParser#NOT_CONDITIONAL
+     * @see SyntaxParser#MAYBE_CONDITIONAL
+     * @see SyntaxParser#CONDITIONAL
      */
     public static Optional<? extends Expression<Boolean>> parseBooleanExpression(String s, @MagicConstant(intValues = {NOT_CONDITIONAL, MAYBE_CONDITIONAL, CONDITIONAL}) int conditional, ParserState parserState, SkriptLogger logger) {
         // I swear this is the cleanest way to do it
-        if (s.startsWith("(") && s.endsWith(")") && StringUtils.findClosingIndex(s, '(', ')', 0) == s.length() - 1) {
+        if(s.startsWith("(") && s.endsWith(")") && StringUtils.findClosingIndex(s, '(', ')', 0) == s.length() - 1) {
             s = s.substring(1, s.length() - 1);
         }
-        if (s.equalsIgnoreCase("true")) {
+        if(s.equalsIgnoreCase("true")) {
             return Optional.of(new SimpleLiteral<>(Boolean.class, true));
-        } else if (s.equalsIgnoreCase("false")) {
+        } else if(s.equalsIgnoreCase("false")) {
             return Optional.of(new SimpleLiteral<>(Boolean.class, false));
         }
         var variable = (Optional<? extends Variable<Boolean>>) Variables.parseVariable(s, Boolean.class, parserState, logger);
-        if (variable.isPresent()) {
-            if (variable.filter(v -> !v.isSingle()).isPresent()) {
+        if(variable.isPresent()) {
+            if(variable.filter(v -> !v.isSingle()).isPresent()) {
                 logger.error("A single value was expected, but " +
                         s +
                         " represents multiple values.", ErrorType.SEMANTIC_ERROR);
@@ -180,24 +186,24 @@ public class SyntaxParser {
             }
         }
         for (var info : recentExpressions) {
-            if (info.getReturnType().getType().getTypeClass() != Boolean.class)
+            if(info.getReturnType().getType().getTypeClass() != Boolean.class)
                 continue;
             var expr = (Optional<? extends Expression<Boolean>>) matchExpressionInfo(s, info, BOOLEAN_PATTERN_TYPE, parserState, logger);
-            if (expr.isPresent()) {
+            if(expr.isPresent()) {
                 switch (conditional) {
                     case 0: // Can't be conditional
-                        if (ConditionalExpression.class.isAssignableFrom(expr.get().getClass())) {
+                        if(ConditionalExpression.class.isAssignableFrom(expr.get().getClass())) {
                             logger.error("The boolean expression must not be conditional", ErrorType.SEMANTIC_ERROR);
                             return Optional.empty();
                         }
                         break;
                     case 2: // Has to be conditional
-                        if (!ConditionalExpression.class.isAssignableFrom(expr.get().getClass())) {
+                        if(!ConditionalExpression.class.isAssignableFrom(expr.get().getClass())) {
                             logger.error("The boolean expression must be conditional", ErrorType.SEMANTIC_ERROR);
                             return Optional.empty();
                         }
                     case 1: // Can be conditional
-                        if (ConditionalExpression.class.isAssignableFrom(expr.get().getClass())) {
+                        if(ConditionalExpression.class.isAssignableFrom(expr.get().getClass())) {
                             recentConditions.acknowledge((ExpressionInfo<? extends ConditionalExpression, ? extends Boolean>) info);
                         }
                     default: // You just want me dead, don't you ?
@@ -213,24 +219,24 @@ public class SyntaxParser {
         var remainingExpressions = SyntaxManager.getAllExpressions();
         recentExpressions.removeFrom(remainingExpressions);
         for (var info : remainingExpressions) {
-            if (info.getReturnType().getType().getTypeClass() != Boolean.class)
+            if(info.getReturnType().getType().getTypeClass() != Boolean.class)
                 continue;
             var expr = (Optional<? extends Expression<Boolean>>) matchExpressionInfo(s, info, BOOLEAN_PATTERN_TYPE, parserState, logger);
-            if (expr.isPresent()) {
+            if(expr.isPresent()) {
                 switch (conditional) {
                     case 0: // Can't be conditional
-                        if (ConditionalExpression.class.isAssignableFrom(expr.get().getClass())) {
+                        if(ConditionalExpression.class.isAssignableFrom(expr.get().getClass())) {
                             logger.error("The boolean expression must not be conditional", ErrorType.SEMANTIC_ERROR);
                             return Optional.empty();
                         }
                         break;
                     case 2: // Has to be conditional
-                        if (!ConditionalExpression.class.isAssignableFrom(expr.get().getClass())) {
+                        if(!ConditionalExpression.class.isAssignableFrom(expr.get().getClass())) {
                             logger.error("The boolean expression must be conditional", ErrorType.SEMANTIC_ERROR);
                             return Optional.empty();
                         }
                     case 1: // Can be conditional
-                        if (ConditionalExpression.class.isAssignableFrom(expr.get().getClass())) {
+                        if(ConditionalExpression.class.isAssignableFrom(expr.get().getClass())) {
                             recentConditions.acknowledge((ExpressionInfo<? extends ConditionalExpression, ? extends Boolean>) info);
                         }
                     default: // You just want me dead, don't you ?
@@ -252,19 +258,19 @@ public class SyntaxParser {
         var infoType = info.getReturnType();
         var infoTypeClass = infoType.getType().getTypeClass();
         var expectedTypeClass = expectedType.getType().getTypeClass();
-        if (!expectedTypeClass.isAssignableFrom(infoTypeClass) && !Converters.converterExists(infoTypeClass, expectedTypeClass))
+        if(!expectedTypeClass.isAssignableFrom(infoTypeClass) && !Converters.converterExists(infoTypeClass, expectedTypeClass))
             return Optional.empty();
         for (var i = 0; i < patterns.size(); i++) {
             var element = patterns.get(i);
             logger.setContext(ErrorContext.MATCHING);
             var parser = new MatchContext(element, parserState, logger);
-            if (element.match(s, 0, parser) != -1) {
+            if(element.match(s, 0, parser) != -1) {
                 try {
                     var expression = (Expression<? extends T>) info.getSyntaxClass()
                             .getDeclaredConstructor()
                             .newInstance();
                     logger.setContext(ErrorContext.INITIALIZATION);
-                    if (!expression.init(
+                    if(!expression.init(
                             parser.getParsedExpressions().toArray(new Expression[0]),
                             i,
                             parser.toParseResult()
@@ -273,9 +279,9 @@ public class SyntaxParser {
                     }
                     logger.setContext(ErrorContext.CONSTRAINT_CHECKING);
                     Class<?> expressionReturnType = expression.getReturnType();
-                    if (!expectedTypeClass.isAssignableFrom(expressionReturnType)) { // Would only screw up in case of bad dynamic type usage
+                    if(!expectedTypeClass.isAssignableFrom(expressionReturnType)) { // Would only screw up in case of bad dynamic type usage
                         var converted = expression.convertExpression(expectedTypeClass);
-                        if (converted.isPresent()) {
+                        if(converted.isPresent()) {
                             return converted;
                         } else {
                             var type = TypeManager.getByClass(expressionReturnType);
@@ -287,18 +293,19 @@ public class SyntaxParser {
                             return Optional.empty();
                         }
                     }
-                    if (!expression.isSingle() &&
+                    if(!expression.isSingle() &&
                             expectedType.isSingle()) {
                         logger.error("A single value was expected, but '" + s + "' represents multiple values.", ErrorType.SEMANTIC_ERROR);
                         continue;
                     }
-                    if (parserState.isRestrictingExpressions() && parserState.forbidsSyntax(expression.getClass())) {
+                    if(parserState.isRestrictingExpressions() && parserState.forbidsSyntax(expression.getClass())) {
                         logger.setContext(ErrorContext.RESTRICTED_SYNTAXES);
                         logger.error("The enclosing section does not allow the use of this expression : " + expression.toString(null, logger.isDebug()), ErrorType.SEMANTIC_ERROR);
                         continue;
                     }
                     return Optional.of(expression);
-                } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+                } catch (InstantiationException | IllegalAccessException | NoSuchMethodException |
+                         InvocationTargetException e) {
                     logger.error("Couldn't instantiate class '" + info.getSyntaxClass().getName() + "'", ErrorType.EXCEPTION);
                 }
             }
@@ -308,9 +315,10 @@ public class SyntaxParser {
 
     /**
      * Parses a line of code as an {@link InlineCondition}
-     * @param s the line to be parsed
+     *
+     * @param s           the line to be parsed
      * @param parserState the current parser state
-     * @param logger the logger
+     * @param logger      the logger
      * @return an inline condition that was successfully parsed, or {@literal null} if the string is empty,
      * no match was found
      * or for another reason detailed in an error message
@@ -323,59 +331,60 @@ public class SyntaxParser {
 
     /**
      * Parses a list literal expression (of the form {@code ..., ... and ...}) from the given {@linkplain String}  and {@link PatternType expected return type}
-     * @param <T> the type of the list literal
-     * @param s the string to be parsed as a list literal
+     *
+     * @param <T>          the type of the list literal
+     * @param s            the string to be parsed as a list literal
      * @param expectedType the expected return type (must be plural)
-     * @param parserState the current parser state
-     * @param logger the logger
+     * @param parserState  the current parser state
+     * @param logger       the logger
      * @return a list literal that was successfully parsed, or {@literal null} if the string is empty,
      * no match was found
      * or for another reason detailed in an error message.
      */
     public static <T> Optional<? extends Expression<? extends T>> parseListLiteral(String s, PatternType<T> expectedType, ParserState parserState, SkriptLogger logger) {
         assert !expectedType.isSingle();
-        if (!s.contains(",") && !s.contains("and") && !s.contains("nor") && !s.contains("or"))
+        if(!s.contains(",") && !s.contains("and") && !s.contains("nor") && !s.contains("or"))
             return Optional.empty();
         List<String> parts = new ArrayList<>();
         var m = LIST_SPLIT_PATTERN.matcher(s);
         var lastIndex = 0;
-        for (var i = 0; i < s.length(); i = StringUtils.nextSimpleCharacterIndex(s, i+1)) {
-            if (i == -1) {
+        for (var i = 0; i < s.length(); i = StringUtils.nextSimpleCharacterIndex(s, i + 1)) {
+            if(i == -1) {
                 return Optional.empty();
-            } else if (StringUtils.nextSimpleCharacterIndex(s, i) > i) { // We are currently at the start of something we need to skip over
+            } else if(StringUtils.nextSimpleCharacterIndex(s, i) > i) { // We are currently at the start of something we need to skip over
                 i = StringUtils.nextSimpleCharacterIndex(s, i) - 1;
                 continue;
             }
             var c = s.charAt(i);
-            if (c == ' ' || c == ',') {
+            if(c == ' ' || c == ',') {
                 m.region(i, s.length());
-                if (m.lookingAt()) {
-                    if (i == lastIndex)
+                if(m.lookingAt()) {
+                    if(i == lastIndex)
                         return Optional.empty();
                     parts.add(s.substring(lastIndex, i));
                     parts.add(m.group());
                     i = m.end() - 1;
                     lastIndex = i;
                 }
-            } else if (c == '(') {
+            } else if(c == '(') {
                 var closing = StringUtils.getEnclosedText(s, '(', ')', i);
-                if (closing.isPresent()) {
+                if(closing.isPresent()) {
                     var finalI = i; // Lambdas require it
                     i = closing.map(cl -> finalI + cl.length() + 1).orElse(i);
                 }
             }
         }
-        if (lastIndex < s.length() - 1)
+        if(lastIndex < s.length() - 1)
             parts.add(s.substring(lastIndex));
-        if (parts.size() == 1)
+        if(parts.size() == 1)
             return Optional.empty();
         Boolean isAndList = null; // Hello nullable booleans, it had been a pleasure NOT using you
         for (var i = 0; i < parts.size(); i++) {
-            if ((i & 1) == 1) { // Odd index == separator
+            if((i & 1) == 1) { // Odd index == separator
                 var separator = parts.get(i).strip();
-                if (separator.equalsIgnoreCase("and") || separator.equalsIgnoreCase("nor")) {
+                if(separator.equalsIgnoreCase("and") || separator.equalsIgnoreCase("nor")) {
                     isAndList = true;
-                } else if (separator.equalsIgnoreCase("or")) {
+                } else if(separator.equalsIgnoreCase("or")) {
                     isAndList = isAndList != null && isAndList;
                 }
             }
@@ -384,24 +393,24 @@ public class SyntaxParser {
         List<Expression<? extends T>> expressions = new ArrayList<>();
         var isLiteralList = true;
         for (var i = 0; i < parts.size(); i++) {
-            if ((i & 1) == 0) { // Even index == element
+            if((i & 1) == 0) { // Even index == element
                 var part = parts.get(i).strip();
                 logger.recurse();
                 var expression = parseExpression(part, expectedType, parserState, logger);
                 logger.callback();
-                if (expression.isEmpty())
+                if(expression.isEmpty())
                     return Optional.empty();
                 isLiteralList &= Literal.isLiteral(expression.get());
                 expressions.add(expression.get());
             }
         }
-        if (expressions.size() == 1)
+        if(expressions.size() == 1)
             return Optional.of(expressions.get(0));
-        if (isLiteralList) {
+        if(isLiteralList) {
             Literal<?>[] literals = new Literal[expressions.size()];
             for (var i = 0; i < expressions.size(); i++) {
                 var exp = expressions.get(i);
-                if (exp instanceof Literal) {
+                if(exp instanceof Literal) {
                     literals[i] = (Literal<?>) exp;
                 } else {
                     assert exp instanceof VariableString;
@@ -427,11 +436,12 @@ public class SyntaxParser {
 
     /**
      * Parses a literal of a given {@link PatternType type} from the given {@linkplain String}
-     * @param <T> the type of the literal
-     * @param s the string to be parsed as a literal
+     *
+     * @param <T>          the type of the literal
+     * @param s            the string to be parsed as a literal
      * @param expectedType the expected return type
-     * @param parserState the current parser state
-     * @param logger the logger
+     * @param parserState  the current parser state
+     * @param logger       the logger
      * @return a literal that was successfully parsed, or {@literal null} if the string is empty,
      * no match was found
      * or for another reason detailed in an error message.
@@ -440,21 +450,21 @@ public class SyntaxParser {
         var classToTypeMap = TypeManager.getClassToTypeMap();
         for (var c : classToTypeMap.keySet()) {
             Class<? extends T> expectedClass = expectedType.getType().getTypeClass();
-            if (expectedClass.isAssignableFrom(c) || Converters.converterExists(c, expectedClass)) {
+            if(expectedClass.isAssignableFrom(c) || Converters.converterExists(c, expectedClass)) {
                 Optional<? extends Function<String, ?>> literalParser = classToTypeMap.get(c).getLiteralParser();
-                if (literalParser.isPresent()) {
+                if(literalParser.isPresent()) {
                     var literal = literalParser.map(l -> (T) l.apply(s));
-                    if (literal.isPresent() && expectedClass.isAssignableFrom(c)) {
+                    if(literal.isPresent() && expectedClass.isAssignableFrom(c)) {
                         var one = (T[]) Array.newInstance(literal.get().getClass(), 1);
                         one[0] = literal.get();
                         return Optional.of(new SimpleLiteral<>(one));
-                    } else if (literal.isPresent()) {
+                    } else if(literal.isPresent()) {
                         return new SimpleLiteral<>((Class<T>) c, literal.get()).convertExpression(expectedType.getType().getTypeClass());
                     }
-                } else if (expectedClass == String.class || c == String.class) {
+                } else if(expectedClass == String.class || c == String.class) {
                     var vs = VariableString.newInstanceWithQuotes(s, parserState, logger)
                             .map(v -> (Expression<? extends T>) v);
-                    if (vs.isPresent()) {
+                    if(vs.isPresent()) {
                         return vs;
                     }
                 }
@@ -465,19 +475,20 @@ public class SyntaxParser {
 
     /**
      * Parses a line of code as an {@link Effect}
-     * @param s the line to be parsed
+     *
+     * @param s           the line to be parsed
      * @param parserState the current parser state
-     * @param logger the logger
+     * @param logger      the logger
      * @return an effect that was successfully parsed, or {@literal null} if the string is empty,
      * no match was found
      * or for another reason detailed in an error message
      */
     public static Optional<? extends Effect> parseEffect(String s, ParserState parserState, SkriptLogger logger) {
-        if (s.isEmpty())
+        if(s.isEmpty())
             return Optional.empty();
         for (var recentEffect : recentEffects) {
             var eff = matchEffectInfo(s, recentEffect, parserState, logger);
-            if (eff.isPresent()) {
+            if(eff.isPresent()) {
                 recentEffects.acknowledge(recentEffect);
                 logger.clearLogs();
                 return eff;
@@ -489,7 +500,7 @@ public class SyntaxParser {
         recentEffects.removeFrom(remainingEffects);
         for (var remainingEffect : remainingEffects) {
             var eff = matchEffectInfo(s, remainingEffect, parserState, logger);
-            if (eff.isPresent()) {
+            if(eff.isPresent()) {
                 recentEffects.acknowledge(remainingEffect);
                 logger.clearLogs();
                 return eff;
@@ -507,13 +518,13 @@ public class SyntaxParser {
             var element = patterns.get(i);
             logger.setContext(ErrorContext.MATCHING);
             var parser = new MatchContext(element, parserState, logger);
-            if (element.match(s, 0, parser) != -1) {
+            if(element.match(s, 0, parser) != -1) {
                 try {
                     var eff = info.getSyntaxClass()
                             .getDeclaredConstructor()
                             .newInstance();
                     logger.setContext(ErrorContext.INITIALIZATION);
-                    if (!eff.init(
+                    if(!eff.init(
                             parser.getParsedExpressions().toArray(new Expression[0]),
                             i,
                             parser.toParseResult()
@@ -521,7 +532,8 @@ public class SyntaxParser {
                         continue;
                     }
                     return Optional.of(eff);
-                } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+                } catch (InstantiationException | IllegalAccessException | NoSuchMethodException |
+                         InvocationTargetException e) {
                     logger.error("Couldn't instantiate class " + info.getSyntaxClass(), ErrorType.EXCEPTION);
                 }
             }
@@ -531,29 +543,30 @@ public class SyntaxParser {
 
     /**
      * Parses a line of code as a {@link Statement}, either an {@link Effect} or an {@link InlineCondition}
-     * @param s the line to be parsed
+     *
+     * @param s           the line to be parsed
      * @param parserState the current parser state
-     * @param logger the logger
+     * @param logger      the logger
      * @return a statement that was successfully parsed, or {@literal null} if the string is empty,
      * no match was found
      * or for another reason detailed in an error message
      */
     public static Optional<? extends Statement> parseStatement(String s, ParserState parserState, SkriptLogger logger) {
-        if (s.isEmpty())
+        if(s.isEmpty())
             return Optional.empty();
-        if (s.regionMatches(true, 0, "continue if ", 0, "continue if ".length())) { // startsWithIgnoreCase
+        if(s.regionMatches(true, 0, "continue if ", 0, "continue if ".length())) { // startsWithIgnoreCase
             var cond = parseInlineCondition(s.substring("continue if ".length()), parserState, logger)
                     .filter(__ -> parserState.forbidsSyntax(InlineCondition.class));
-            if (cond.isEmpty()) {
+            if(cond.isEmpty()) {
                 logger.setContext(ErrorContext.RESTRICTED_SYNTAXES);
                 logger.error("Inline conditions are not allowed in this section", ErrorType.SEMANTIC_ERROR);
             }
             return cond;
         }
         var eff = parseEffect(s, parserState, logger);
-        if (eff.isEmpty()) {
+        if(eff.isEmpty()) {
             return Optional.empty();
-        } else if (parserState.forbidsSyntax(eff.get().getClass())) {
+        } else if(parserState.forbidsSyntax(eff.get().getClass())) {
             logger.setContext(ErrorContext.RESTRICTED_SYNTAXES);
             logger.error("The enclosing section does not allow the use of this effect : " + eff.get().toString(null, logger.isDebug()), ErrorType.SEMANTIC_ERROR);
             return Optional.empty();
@@ -564,19 +577,20 @@ public class SyntaxParser {
 
     /**
      * Parses a section of a file as a {@link CodeSection}
-     * @param section the section to be parsed
+     *
+     * @param section     the section to be parsed
      * @param parserState the current parser state
-     * @param logger the logger
+     * @param logger      the logger
      * @return a section that was successfully parsed, or {@literal null} if the section is empty,
      * no match was found
      * or for another reason detailed in an error message
      */
     public static Optional<? extends CodeSection> parseSection(FileSection section, ParserState parserState, SkriptLogger logger) {
-        if (section.getLineContent().isEmpty())
+        if(section.getLineContent().isEmpty())
             return Optional.empty();
         for (var recentSection : recentSections) {
             var sec = matchSectionInfo(section, recentSection, parserState, logger);
-            if (sec.isPresent()) {
+            if(sec.isPresent()) {
                 recentSections.acknowledge(recentSection);
                 logger.clearLogs();
                 return sec;
@@ -587,7 +601,7 @@ public class SyntaxParser {
         recentSections.removeFrom(remainingSections);
         for (var remainingSection : remainingSections) {
             var sec = matchSectionInfo(section, remainingSection, parserState, logger);
-            if (sec.isPresent()) {
+            if(sec.isPresent()) {
                 recentSections.acknowledge(remainingSection);
                 logger.clearLogs();
                 return sec;
@@ -605,13 +619,13 @@ public class SyntaxParser {
             var element = patterns.get(i);
             logger.setContext(ErrorContext.MATCHING);
             var parser = new MatchContext(element, parserState, logger);
-            if (element.match(section.getLineContent(), 0, parser) != -1) {
+            if(element.match(section.getLineContent(), 0, parser) != -1) {
                 try {
                     var sec = info.getSyntaxClass()
                             .getDeclaredConstructor()
                             .newInstance();
                     logger.setContext(ErrorContext.INITIALIZATION);
-                    if (!sec.init(
+                    if(!sec.init(
                             parser.getParsedExpressions().toArray(new Expression[0]),
                             i,
                             parser.toParseResult()
@@ -620,7 +634,8 @@ public class SyntaxParser {
                     }
                     sec.loadSection(section, parserState, logger);
                     return Optional.of(sec);
-                } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+                } catch (InstantiationException | IllegalAccessException | NoSuchMethodException |
+                         InvocationTargetException e) {
                     logger.error("Couldn't instantiate class " + info.getSyntaxClass(), ErrorType.EXCEPTION);
                 }
             }
@@ -630,18 +645,19 @@ public class SyntaxParser {
 
     /**
      * Parses a section of a file as a {@link Trigger}
+     *
      * @param section the section to be parsed
-     * @param logger the logger
+     * @param logger  the logger
      * @return a trigger that was successfully parsed, or {@literal null} if the section is empty,
      * no match was found
      * or for another reason detailed in an error message
      */
     public static Optional<? extends UnloadedTrigger> parseTrigger(FileSection section, SkriptLogger logger) {
-        if (section.getLineContent().isEmpty())
+        if(section.getLineContent().isEmpty())
             return Optional.empty();
         for (var recentEvent : recentEvents) {
             var trigger = matchEventInfo(section, recentEvent, logger);
-            if (trigger.isPresent()) {
+            if(trigger.isPresent()) {
                 recentEvents.acknowledge(recentEvent);
                 logger.clearLogs();
                 return trigger;
@@ -653,7 +669,7 @@ public class SyntaxParser {
         recentEvents.removeFrom(remainingEvents);
         for (var remainingEvent : remainingEvents) {
             var trigger = matchEventInfo(section, remainingEvent, logger);
-            if (trigger.isPresent()) {
+            if(trigger.isPresent()) {
                 recentEvents.acknowledge(remainingEvent);
                 logger.clearLogs();
                 return trigger;
@@ -666,36 +682,53 @@ public class SyntaxParser {
     }
 
     private static Optional<? extends UnloadedTrigger> matchEventInfo(FileSection section, SkriptEventInfo<?> info, SkriptLogger logger) {
-        var patterns = info.getPatterns();
+        List<PatternElement> patterns = info.getPatterns();
+        // check code against each pattern of the event info
         for (var i = 0; i < patterns.size(); i++) {
-            var element = patterns.get(i);
-            var parserState = new ParserState();
+            PatternElement element = patterns.get(i);
+            ParserState parserState = new ParserState();
             logger.setContext(ErrorContext.MATCHING);
-            var parser = new MatchContext(element, parserState, logger);
-            if (element.match(section.getLineContent(), 0, parser) != -1) {
-                try {
-                    var event = info.getSyntaxClass()
-                            .getDeclaredConstructor()
-                            .newInstance();
-                    logger.setContext(ErrorContext.INITIALIZATION);
-                    if (!event.init(
-                            parser.getParsedExpressions().toArray(new Expression[0]),
-                            i,
-                            parser.toParseResult()
-                    )) {
-                        continue;
-                    }
-                    var trig = new Trigger(event);
-                    parserState.setCurrentContexts(info.getContexts());
-                    /*
-                     * We don't actually load the trigger here, that will be left to the loading priority system
-                     */
-                    return Optional.of(new UnloadedTrigger(trig, section, logger.getLine(), info, parserState));
-                } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-                    logger.error("Couldn't instantiate class " + info.getSyntaxClass(), ErrorType.EXCEPTION);
-                }
+            MatchContext parser = new MatchContext(element, parserState, logger);
+
+            // the actual check
+            if(element.match(section.getLineContent(), 0, parser) == -1) {
+                continue;
             }
+
+            SkriptEvent event = tryCreateEvent(info, logger);
+            if(event == null) return Optional.empty();
+
+            // init the event; skip if invalid
+            Expression<?>[] expressions = parser.getParsedExpressions().toArray(new Expression[0]);
+            boolean initSuccess = event.init(expressions, i, parser.toParseResult());
+            if(!initSuccess) {
+                continue;
+            }
+            var trig = new Trigger(event);
+            parserState.setCurrentContexts(info.getContexts());
+
+            /*
+             * We don't load the trigger here, that will be left to the loading priority system
+             */
+            return Optional.of(new UnloadedTrigger(trig, section, logger.getLine(), info, parserState));
         }
         return Optional.empty();
     }
+
+
+    private static SkriptEvent tryCreateEvent(SkriptEventInfo<?> info, SkriptLogger logger) {
+        try {
+            logger.setContext(ErrorContext.INITIALIZATION);
+
+            return info.getSyntaxClass()
+                    .getDeclaredConstructor()
+                    .newInstance();
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                 NoSuchMethodException e) {
+            logger.error("Couldn't instantiate class " + info.getSyntaxClass(), ErrorType.EXCEPTION);
+        }
+
+        return null;
+    }
+
 }

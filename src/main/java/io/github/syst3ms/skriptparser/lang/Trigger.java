@@ -4,6 +4,7 @@ import io.github.syst3ms.skriptparser.file.FileSection;
 import io.github.syst3ms.skriptparser.log.SkriptLogger;
 import io.github.syst3ms.skriptparser.parsing.ParseContext;
 import io.github.syst3ms.skriptparser.parsing.ParserState;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
@@ -13,9 +14,10 @@ import java.util.Optional;
  * Usually declares an event.
  */
 public class Trigger extends CodeSection {
+    @NotNull
     private final SkriptEvent event;
 
-    public Trigger(SkriptEvent event) {
+    public Trigger(@NotNull SkriptEvent event) {
         this.event = event;
     }
 
@@ -43,6 +45,7 @@ public class Trigger extends CodeSection {
         return event.toString(ctx, debug);
     }
 
+    @NotNull
     public SkriptEvent getEvent() {
         return event;
     }
