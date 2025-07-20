@@ -112,7 +112,9 @@ public class FileUtils {
      * @param subPackages a list of all subpackages of the root package, in which classes will be loaded
      * @throws IOException if an I/O error has occurred
      */
-    public static void loadClasses(File jarFile, String rootPackage, String... subPackages) throws IOException {
+    public static Set<Class<?>> loadClasses(File jarFile, String rootPackage, String... subPackages) throws IOException {
+        Set<Class<?>> result = new HashSet<>();
+
         if (jarFile.isDirectory())
             throw new IllegalArgumentException("The provided file is actually a directory!");
         for (var i = 0; i < subPackages.length; i++)
@@ -134,7 +136,7 @@ public class FileUtils {
                             !path.matches(".+\\$\\d+\\.class")) { // It's of very little use to load anonymous classes
                         final var c = path.replace('/', '.').substring(0, path.length() - ".class".length());
                         try {
-                            Class.forName(c, true, FileUtils.class.getClassLoader());
+                            result.add(Class.forName(c, true, FileUtils.class.getClassLoader()));
                         } catch (final ClassNotFoundException | ExceptionInInitializerError ex) {
                             ex.printStackTrace();
                         }
@@ -142,6 +144,8 @@ public class FileUtils {
                 }
             }
         }
+
+        return result;
     }
 
     /**
@@ -152,7 +156,10 @@ public class FileUtils {
      * @param subPackages a list of all subpackages of the root package, in which classes will be leadied
      * @throws IOException if an I/O error has occurred
      */
-    public static void loadClasses(Path directory, String rootPackage, String... subPackages) throws IOException {
+    public static Set<Class<?>> loadClasses(Path directory, String rootPackage, String... subPackages) throws IOException {
+        Set<Class<?>> result = new HashSet<>();
+
+
         if (!directory.toFile().isDirectory())
             throw new IllegalArgumentException("The provided file isn't a directory!");
         for (var i = 0; i < subPackages.length; i++)
@@ -172,13 +179,15 @@ public class FileUtils {
                 if (load && !path.matches(".+\\$\\d+\\.class")) { // It's of very little use to load anonymous classes
                     final var c = path.replace('\\', '.').substring(0, path.length() - ".class".length());
                     try {
-                        Class.forName(c, true, FileUtils.class.getClassLoader());
+                        result.add(Class.forName(c, true, FileUtils.class.getClassLoader()));
                     } catch (final ClassNotFoundException | ExceptionInInitializerError ex) {
                         ex.printStackTrace();
                     }
                 }
             }
         }
+
+        return result;
     }
 
     /**
