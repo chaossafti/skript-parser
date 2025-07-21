@@ -136,8 +136,9 @@ public class FileUtils {
     public static Set<Class<?>> loadClasses(File jarFile, String rootPackage, String... subPackages) throws IOException {
         Set<Class<?>> result = new HashSet<>();
 
-        if (jarFile.isDirectory())
-            throw new IllegalArgumentException("The provided file is actually a directory!");
+        if (jarFile.isDirectory()) {
+            return loadClasses(jarFile.toPath(), rootPackage, subPackages);
+        }
         for (var i = 0; i < subPackages.length; i++)
             subPackages[i] = subPackages[i].replace('.', '/') + "/";
         rootPackage = rootPackage.replace('.', '/') + "/";

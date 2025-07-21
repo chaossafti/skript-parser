@@ -608,7 +608,7 @@ public class SkriptRegistration {
         private final Class<C> c;
         private final String baseName;
         private final String pattern;
-        private Function<? super C, String> toStringFunction = o -> Objects.toString(o, TypeManager.NULL_REPRESENTATION);
+        private Function<? super C, String> toStringFunction = null;
         @Nullable
         private Function<String, ? extends C> literalParser;
         @Nullable
@@ -632,11 +632,11 @@ public class SkriptRegistration {
         }
 
         /**
-         * @param toStringFunction a function converting an instance of the type to a String
+         * @param newToStringFunction a function converting an instance of the type to a String
          * @return the registrar
          */
-        public TypeRegistrar<C> toStringFunction(Function<? super C, String> toStringFunction) {
-            this.toStringFunction = c -> c == null ? TypeManager.NULL_REPRESENTATION : toStringFunction.apply(c);
+        public TypeRegistrar<C> toStringFunction(Function<? super C, String> newToStringFunction) {
+            this.toStringFunction = c -> c == null ? TypeManager.NULL_REPRESENTATION : newToStringFunction.apply(c);
             return this;
         }
 
@@ -664,7 +664,7 @@ public class SkriptRegistration {
         @Override
         public void register() {
             newTypes = true;
-            types.add(new Type<>(c, baseName, pattern, literalParser, toStringFunction, defaultChanger, arithmetic));
+            types.add(new Type<>(c, baseName, pattern, literalParser, toStringFunction == null ? (c) -> Objects.toString(c, TypeManager.NULL_REPRESENTATION) : toStringFunction, defaultChanger, arithmetic));
         }
     }
 

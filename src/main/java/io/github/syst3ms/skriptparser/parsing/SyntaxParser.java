@@ -28,10 +28,7 @@ import io.github.syst3ms.skriptparser.variables.Variables;
 import org.intellij.lang.annotations.MagicConstant;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 
@@ -75,13 +72,13 @@ public class SyntaxParser {
 
 
     // We control input, so new SkriptLogger instance is fine
-    public static final PatternElement CONTEXT_VALUE_PATTERN = PatternParser.parsePattern("[the] (0:(past|previous)|1:|2:(future|next)) [ctx:context-]<.+>", new SkriptLogger()).orElseThrow();
+    public static final PatternElement CONTEXT_VALUE_PATTERN = PatternParser.parsePattern("[the] (0:(past|previous)|1:|2:(future|next)) [ctx:context-]<.+>", new SkriptLogger()).orElseThrow(() -> new NoSuchElementException("Could not parse CONTEXT_VALUE_PATTERN"));
 
     public static final ExpressionInfo<ExprBooleanOperators, Boolean> EXPRESSION_BOOLEAN_OPERATORS = SyntaxManager.getAllExpressions().stream()
             .filter(i -> i.getSyntaxClass() == ExprBooleanOperators.class)
             .findFirst()
             .map(val -> (ExpressionInfo<ExprBooleanOperators, Boolean>) val)
-            .orElseThrow();
+            .orElseThrow(() -> new NoSuchElementException("Could not find EXPRESSION_BOOLEAN_OPERATORS in the SyntaxManager registry"));
 
     /**
      * All {@link Effect effects} that are successfully parsed during parsing, in order of last successful parsing

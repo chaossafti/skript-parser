@@ -13,7 +13,7 @@ import java.util.function.Predicate;
 public class SkriptEventManager {
     public static final SkriptEventManager GLOBAL_EVENT_MANAGER = new SkriptEventManager();
 
-    private final MultiMap<Class<? extends SkriptEvent>, SkriptEventHandler> events = new MultiMap<>();
+    private final MultiMap<String, SkriptEventHandler> events = new MultiMap<>();
 
     public SkriptEventManager() {
 
@@ -30,7 +30,7 @@ public class SkriptEventManager {
         Objects.requireNonNull(trigger);
 
         TriggerEventHandler triggerEventHandler = new TriggerEventHandler(trigger, this);
-        events.putOne(clazz, triggerEventHandler);
+        events.putOne(clazz.getName(), triggerEventHandler);
         return triggerEventHandler;
     }
 
@@ -46,7 +46,7 @@ public class SkriptEventManager {
         Objects.requireNonNull(trigger);
 
         TriggerEventHandler triggerEventHandler = new TriggerEventHandler(trigger, contextPredicate, this);
-        events.putOne(clazz, triggerEventHandler);
+        events.putOne(clazz.getName(), triggerEventHandler);
         return triggerEventHandler;
     }
 
@@ -54,7 +54,14 @@ public class SkriptEventManager {
         Objects.requireNonNull(eventHandler);
         Objects.requireNonNull(clazz);
 
-        events.putOne(clazz, eventHandler);
+        events.putOne(clazz.getName(), eventHandler);
+    }
+
+    public void registerEventHandler(@NotNull String eventName, @NotNull SkriptEventHandler eventHandler) {
+        Objects.requireNonNull(eventHandler);
+        Objects.requireNonNull(eventName);
+
+        events.putOne(eventName, eventHandler);
     }
 
 
@@ -62,13 +69,17 @@ public class SkriptEventManager {
         Objects.requireNonNull(clazz);
         Objects.requireNonNull(eventHandler);
 
-        List<SkriptEventHandler> registeredEvents = events.get(clazz);
+        List<SkriptEventHandler> registeredEvents = events.get(clazz.getName());
         registeredEvents.removeIf(skriptEventInfo -> skriptEventInfo == eventHandler);
     }
 
 
     public void callEvent(@NotNull Class<? extends SkriptEvent> clazz, TriggerContext context) {
-        List<SkriptEventHandler> registeredHandlers = events.get(clazz);
+        callEvent(clazz.getName(), context);
+    }
+
+    public void callEvent(@NotNull String eventName, TriggerContext context) {
+        List<SkriptEventHandler> registeredHandlers = events.get(eventName);
         for (SkriptEventHandler eventHandler : registeredHandlers) {
             if(eventHandler.supports(context)) {
                 eventHandler.handle(context);

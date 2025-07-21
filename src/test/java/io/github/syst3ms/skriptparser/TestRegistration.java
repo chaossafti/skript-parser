@@ -1,5 +1,6 @@
 package io.github.syst3ms.skriptparser;
 
+import io.github.syst3ms.skriptparser.parsing.ParserState;
 import io.github.syst3ms.skriptparser.registration.DefaultRegistration;
 import io.github.syst3ms.skriptparser.registration.SkriptRegistration;
 import io.github.syst3ms.skriptparser.util.FileUtils;
@@ -21,7 +22,7 @@ public class TestRegistration {
 		} catch (NoSuchFieldException | IllegalAccessException e) {
 			e.printStackTrace();
 		}
-		DefaultRegistration.register();
+		DefaultRegistration.register(Parser.getMainRegistration());
 		try {
 			FileUtils.loadClasses(
 				Path.of("build/classes/java/main"),

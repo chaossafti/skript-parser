@@ -30,9 +30,7 @@ public class DefaultRegistration {
     private static final String INTEGER_PATTERN = "-?[0-9]+";
     private static final String DECIMAL_PATTERN = "-?[0-9]+\\.[0-9]+";
 
-    public static void register() {
-        SkriptRegistration registration = Parser.getMainRegistration();
-
+    public static void register(SkriptRegistration registration) {
         /*
          * Classes
          */
