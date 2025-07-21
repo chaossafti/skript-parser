@@ -14,7 +14,7 @@ import java.math.MathContext;
  * 
  * <p>The values are internally stored as {@link BigDecimal} (for performance optimizations) but represented
  * as {@link BigInteger} (for mathematical correctness)
- * 
+ *
  * <p>The following basic calculations have no loss of precision:</p>
  * <ul>
  * <li>{@link #add(BigRational)}</li>
@@ -130,9 +130,9 @@ public class BigRational implements Comparable<BigRational> {
 
     /**
 	 * Calculates the addition (+) of this rational number and the specified argument.
-	 * 
+	 *
 	 * <p>The result has no loss of precision.</p>
-	 * 
+	 *
 	 * @param value the rational number to add
 	 * @return the resulting rational number
 	 */
@@ -149,16 +149,16 @@ public class BigRational implements Comparable<BigRational> {
 	private BigRational add(BigDecimal value) {
 		return of(numerator.add(value.multiply(denominator)), denominator);
 	}
-	
+
 	/**
 	 * Calculates the addition (+) of this rational number and the specified argument.
-	 * 
+	 *
 	 * <p>This is functionally identical to
 	 * <code>this.add(BigRational.valueOf(value))</code>
 	 * but slightly faster.</p>
-	 * 
+	 *
 	 * <p>The result has no loss of precision.</p>
-	 * 
+	 *
 	 * @param value the {@link BigInteger} to add
 	 * @return the resulting rational number
 	 */
