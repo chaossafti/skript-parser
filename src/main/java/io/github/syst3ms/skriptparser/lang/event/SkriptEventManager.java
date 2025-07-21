@@ -44,7 +44,6 @@ public class SkriptEventManager {
     public TriggerEventHandler registerTrigger(@NotNull Class<? extends SkriptEvent> clazz, @NotNull Trigger trigger, Predicate<TriggerContext> contextPredicate) {
         Objects.requireNonNull(clazz);
         Objects.requireNonNull(trigger);
-
         TriggerEventHandler triggerEventHandler = new TriggerEventHandler(trigger, contextPredicate, this);
         events.putOne(clazz.getName(), triggerEventHandler);
         return triggerEventHandler;
@@ -80,6 +79,9 @@ public class SkriptEventManager {
 
     public void callEvent(@NotNull String eventName, TriggerContext context) {
         List<SkriptEventHandler> registeredHandlers = events.get(eventName);
+        if(registeredHandlers == null) {
+            return;
+        }
         for (SkriptEventHandler eventHandler : registeredHandlers) {
             if(eventHandler.supports(context)) {
                 eventHandler.handle(context);
