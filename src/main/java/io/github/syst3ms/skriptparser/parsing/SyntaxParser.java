@@ -27,7 +27,6 @@ import io.github.syst3ms.skriptparser.util.StringUtils;
 import io.github.syst3ms.skriptparser.variables.Variables;
 import org.intellij.lang.annotations.MagicConstant;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.function.Function;
 import java.util.regex.Pattern;
@@ -351,57 +350,51 @@ public class SyntaxParser {
             logger.setContext(ErrorContext.MATCHING);
             var parser = new MatchContext(element, parserState, logger);
             if (element.match(s, 0, parser) == s.length()) {
-                try {
-                    var expression = (Expression<? extends T>) info.getSyntaxClass()
-                            .getDeclaredConstructor()
-                            .newInstance();
-                    logger.setContext(ErrorContext.INITIALIZATION);
-                    if (!expression.init(
-                            parser.getParsedExpressions().toArray(new Expression[0]),
-                            i,
-                            parser.toParseResult()
-                    )) {
-                        continue;
-                    }
-                    logger.setContext(ErrorContext.CONSTRAINT_CHECKING);
-                    Class<?> expressionReturnType = expression.getReturnType();
-                    if (!expectedTypeClass.isAssignableFrom(expressionReturnType)) { // Would only screw up in case of bad dynamic type usage
-                        var converted = expression.convertExpression(expectedTypeClass);
-                        if (converted.isPresent()) {
-                            return converted;
-                        } else {
-                            var type = TypeManager.getByClass(expressionReturnType);
-                            assert type.isPresent();
-                            logger.error(StringUtils.withIndefiniteArticle(expectedType.toString(), false) +
-                                    " was expected, but " +
-                                    StringUtils.withIndefiniteArticle(type.get().toString(), false) +
-                                    " was found", ErrorType.SEMANTIC_ERROR);
-                            return Optional.empty();
-                        }
-                    }
-                    if (!expression.isSingle() &&
-                            expectedType.isSingle()) {
-                        logger.error(
-                                "A single value was expected, but '" + s + "' represents multiple values.",
-                                ErrorType.SEMANTIC_ERROR,
-                                "Use a loop/map to divert each element of this list into single elements"
-                        );
-                        continue;
-                    }
-                    if (parserState.isRestrictingExpressions() && parserState.forbidsSyntax(expression.getClass())) {
-                        logger.setContext(ErrorContext.RESTRICTED_SYNTAXES);
-                        logger.error(
-                                "The enclosing section does not allow the use of this expression: "
-                                        + expression.toString(TriggerContext.DUMMY, logger.isDebug()),
-                                ErrorType.SEMANTIC_ERROR,
-                                "The current section limits the usage of syntax. This means that certain syntax cannot be used here, which was the case. Remove this expression entirely and refer to the documentation for the correct usage of this section"
-                        );
-                        continue;
-                    }
-                    return Optional.of(expression);
-                } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-                    logger.error("Couldn't instantiate class '" + info.getSyntaxClass().getName() + "'", ErrorType.EXCEPTION);
+                var expression = (Expression<? extends T>) info.createInstance();
+                logger.setContext(ErrorContext.INITIALIZATION);
+                if (!expression.init(
+                        parser.getParsedExpressions().toArray(new Expression[0]),
+                        i,
+                        parser.toParseResult()
+                )) {
+                    continue;
                 }
+                logger.setContext(ErrorContext.CONSTRAINT_CHECKING);
+                Class<?> expressionReturnType = expression.getReturnType();
+                if (!expectedTypeClass.isAssignableFrom(expressionReturnType)) { // Would only screw up in case of bad dynamic type usage
+                    var converted = expression.convertExpression(expectedTypeClass);
+                    if (converted.isPresent()) {
+                        return converted;
+                    } else {
+                        var type = TypeManager.getByClass(expressionReturnType);
+                        assert type.isPresent();
+                        logger.error(StringUtils.withIndefiniteArticle(expectedType.toString(), false) +
+                                " was expected, but " +
+                                StringUtils.withIndefiniteArticle(type.get().toString(), false) +
+                                " was found", ErrorType.SEMANTIC_ERROR);
+                        return Optional.empty();
+                    }
+                }
+                if (!expression.isSingle() &&
+                        expectedType.isSingle()) {
+                    logger.error(
+                            "A single value was expected, but '" + s + "' represents multiple values.",
+                            ErrorType.SEMANTIC_ERROR,
+                            "Use a loop/map to divert each element of this list into single elements"
+                    );
+                    continue;
+                }
+                if (parserState.isRestrictingExpressions() && parserState.forbidsSyntax(expression.getClass())) {
+                    logger.setContext(ErrorContext.RESTRICTED_SYNTAXES);
+                    logger.error(
+                            "The enclosing section does not allow the use of this expression: "
+                                    + expression.toString(TriggerContext.DUMMY, logger.isDebug()),
+                            ErrorType.SEMANTIC_ERROR,
+                            "The current section limits the usage of syntax. This means that certain syntax cannot be used here, which was the case. Remove this expression entirely and refer to the documentation for the correct usage of this section"
+                    );
+                    continue;
+                }
+                return Optional.of(expression);
             }
         }
         return Optional.empty();
@@ -587,22 +580,16 @@ public class SyntaxParser {
             logger.setContext(ErrorContext.MATCHING);
             var parser = new MatchContext(element, parserState, logger);
             if (element.match(s, 0, parser) == s.length()) {
-                try {
-                    var eff = info.getSyntaxClass()
-                            .getDeclaredConstructor()
-                            .newInstance();
-                    logger.setContext(ErrorContext.INITIALIZATION);
-                    if (!eff.init(
-                            parser.getParsedExpressions().toArray(new Expression[0]),
-                            i,
-                            parser.toParseResult()
-                    )) {
-                        continue;
-                    }
-                    return Optional.of(eff);
-                } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-                    logger.error("Couldn't instantiate class " + info.getSyntaxClass(), ErrorType.EXCEPTION);
+                var eff = info.createInstance();
+                logger.setContext(ErrorContext.INITIALIZATION);
+                if (!eff.init(
+                        parser.getParsedExpressions().toArray(new Expression[0]),
+                        i,
+                        parser.toParseResult()
+                )) {
+                    continue;
                 }
+                return Optional.of(eff);
             }
         }
         return Optional.empty();
@@ -648,24 +635,18 @@ public class SyntaxParser {
             logger.setContext(ErrorContext.MATCHING);
             var parser = new MatchContext(element, parserState, logger);
             if (element.match(section.getLineContent(), 0, parser) != -1) {
-                try {
-                    var sec = info.getSyntaxClass()
-                            .getDeclaredConstructor()
-                            .newInstance();
-                    logger.setContext(ErrorContext.INITIALIZATION);
-                    if (!sec.init(
-                            parser.getParsedExpressions().toArray(Expression[]::new),
-                            i,
-                            parser.toParseResult())) {
-                        continue;
-                    }
-                    if (!sec.loadSection(section, parserState, logger)) {
-                        continue;
-                    }
-                    return Optional.of(sec);
-                } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-                    logger.error("Couldn't instantiate class " + info.getSyntaxClass(), ErrorType.EXCEPTION);
+                var sec = info.createInstance();
+                logger.setContext(ErrorContext.INITIALIZATION);
+                if (!sec.init(
+                        parser.getParsedExpressions().toArray(Expression[]::new),
+                        i,
+                        parser.toParseResult())) {
+                    continue;
                 }
+                if (!sec.loadSection(section, parserState, logger)) {
+                    continue;
+                }
+                return Optional.of(sec);
             }
         }
         return Optional.empty();
@@ -705,27 +686,21 @@ public class SyntaxParser {
             logger.setContext(ErrorContext.MATCHING);
             var parser = new MatchContext(element, parserState, logger);
             if (element.match(section.getLineContent(), 0, parser) != -1) {
-                try {
-                    var event = info.getSyntaxClass()
-                            .getDeclaredConstructor()
-                            .newInstance();
-                    logger.setContext(ErrorContext.INITIALIZATION);
-                    if (!event.init(
-                            parser.getParsedExpressions().toArray(new Expression[0]),
-                            i,
-                            parser.toParseResult()
-                    )) {
-                        continue;
-                    }
-                    var trig = new Trigger(event);
-                    parserState.setCurrentContexts(info.getContexts());
-                    /*
-                     * We don't actually load the trigger here, that will be left to the loading priority system
-                     */
-                    return Optional.of(new UnloadedTrigger(trig, section, logger.getLine(), info, parserState));
-                } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-                    logger.error("Couldn't instantiate class " + info.getSyntaxClass(), ErrorType.EXCEPTION);
+                var event = info.createInstance();
+                logger.setContext(ErrorContext.INITIALIZATION);
+                if (!event.init(
+                        parser.getParsedExpressions().toArray(new Expression[0]),
+                        i,
+                        parser.toParseResult()
+                )) {
+                    continue;
                 }
+                var trig = new Trigger(event);
+                parserState.setCurrentContexts(info.getContexts());
+                /*
+                 * We don't actually load the trigger here, that will be left to the loading priority system
+                 */
+                return Optional.of(new UnloadedTrigger(trig, section, logger.getLine(), info, parserState));
             }
         }
         return Optional.empty();

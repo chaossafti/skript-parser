@@ -39,6 +39,7 @@ import io.github.syst3ms.skriptparser.types.conversions.ConverterInfo;
 import io.github.syst3ms.skriptparser.types.conversions.Converters;
 import io.github.syst3ms.skriptparser.util.CollectionUtils;
 import io.github.syst3ms.skriptparser.util.MultiMap;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -52,6 +53,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
@@ -673,6 +675,8 @@ public class SkriptRegistration {
         protected final List<String> patterns = new ArrayList<>();
         protected int priority;
         protected final Map<String, Object> data = new HashMap<>();
+        @Nullable
+        protected Supplier<C> supplier = null;
 
         SyntaxRegistrar(Class<C> c, String... patterns) {
             this.c = c;
@@ -700,6 +704,10 @@ public class SkriptRegistration {
                 throw new SkriptParserException("Can't have a negative priority!");
             this.priority = priority;
             return this;
+        }
+
+        public void setSupplier(@NotNull Supplier<C> supplier) {
+            this.supplier = supplier;
         }
 
         public SyntaxRegistrar<C> addData(String identifier, Object data) {
@@ -746,7 +754,7 @@ public class SkriptRegistration {
                 logger.error("Couldn't find a type corresponding to the class '" + returnType.getName() + "'", ErrorType.NO_MATCH);
                 return;
             }
-            expressions.putOne(super.c, new ExpressionInfo<>(registerer, super.c, type.get(), isSingle, priority, parsePatterns(), super.data));
+            expressions.putOne(super.c, new ExpressionInfo<>(registerer, super.c, type.get(), isSingle, priority, parsePatterns(), super.data, supplier));
         }
     }
 
@@ -760,7 +768,7 @@ public class SkriptRegistration {
          */
         @Override
         public void register() {
-            effects.add(new SyntaxInfo<>(registerer, super.c, priority, parsePatterns(), super.data));
+            effects.add(new SyntaxInfo<>(registerer, super.c, priority, parsePatterns(), super.data, supplier));
         }
     }
 
@@ -775,7 +783,7 @@ public class SkriptRegistration {
          */
         @Override
         public void register() {
-            sections.add(new SyntaxInfo<>(registerer, super.c, priority, parsePatterns(), super.data));
+            sections.add(new SyntaxInfo<>(registerer, super.c, priority, parsePatterns(), super.data, supplier));
         }
     }
 
@@ -811,7 +819,7 @@ public class SkriptRegistration {
                     super.patterns.set(i, "[on] " + pattern);
                 }
             }
-            events.add(new SkriptEventInfo<>(registerer, super.c, handledContexts, priority, parsePatterns(), data));
+            events.add(new SkriptEventInfo<>(registerer, super.c, handledContexts, priority, parsePatterns(), data, supplier));
             registerer.addHandledEvent(this.c);
         }
     }
