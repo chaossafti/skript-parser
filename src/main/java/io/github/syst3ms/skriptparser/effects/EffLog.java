@@ -4,39 +4,44 @@ import io.github.syst3ms.skriptparser.Parser;
 import io.github.syst3ms.skriptparser.lang.Effect;
 import io.github.syst3ms.skriptparser.lang.Expression;
 import io.github.syst3ms.skriptparser.lang.TriggerContext;
+import io.github.syst3ms.skriptparser.lang.base.TaggedExpression;
 import io.github.syst3ms.skriptparser.parsing.ParseContext;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Shuts down the whole current sessions.
- * This means that any code under any circumstances will not be run after this effect is triggered.
- * Note that you should use this effect very cautiously.
+ * Prints some text to the console
  *
- * @name Shutdown
- * @pattern shut[ ]down [[the] [current] session]
+ * @name Print
+ * @pattern print %strings% [to [the] console]
  * @since ALPHA
- * @author Mwexim
+ * @author Syst3ms
  */
-public class EffShutdown extends Effect {
+public class EffLog extends Effect {
     static {
         Parser.getMainRegistration().addEffect(
-            EffShutdown.class,
-            "shut[ ]down [[the] [current] session]"
+            EffLog.class,
+            "log %strings% [to [the] console]"
         );
     }
 
+    private Expression<String> expression;
+
+    @SuppressWarnings("unchecked")
     @Override
     public boolean init(Expression<?> @NotNull [] expressions, int matchedPattern, @NotNull ParseContext parseContext) {
+        expression = (Expression<String>) expressions[0];
         return true;
     }
 
     @Override
     public void execute(@NotNull TriggerContext ctx) {
-        System.exit(0);
+        for (String val : TaggedExpression.apply(expression, ctx, "console")) {
+            System.out.println(val);
+        }
     }
 
     @Override
     public String toString(TriggerContext ctx, boolean debug) {
-        return "shutdown";
+        return "print " + expression.toString(ctx, debug);
     }
 }

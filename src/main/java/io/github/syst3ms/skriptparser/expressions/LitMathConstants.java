@@ -59,29 +59,21 @@ public class LitMathConstants implements Literal<Number> {
 
     @Override
     public Number[] getValues() {
-        switch (pattern) {
-            case 0:
-                return new Number[]{BigDecimalMath.pi(BigDecimalMath.DEFAULT_CONTEXT)};
-            case 1:
-                return new Number[]{BigDecimalMath.e(BigDecimalMath.DEFAULT_CONTEXT)};
-            case 2:
-                return new Number[]{PHI};
-            default:
-                throw new IllegalStateException();
-        }
+        return switch (pattern) {
+            case 0 -> new Number[]{BigDecimalMath.pi(BigDecimalMath.DEFAULT_CONTEXT)};
+            case 1 -> new Number[]{BigDecimalMath.e(BigDecimalMath.DEFAULT_CONTEXT)};
+            case 2 -> new Number[]{PHI};
+            default -> throw new IllegalStateException();
+        };
     }
 
     @Override
     public String toString(TriggerContext ctx, boolean debug) {
-        switch (pattern) {
-            case 0:
-                return "pi";
-            case 1:
-                return "e";
-            case 2:
-                return "phi";
-            default:
-                throw new IllegalStateException();
-        }
+        return switch (pattern) {
+            case 0 -> "pi";
+            case 1 -> "e";
+            case 2 -> "phi";
+            default -> throw new IllegalStateException();
+        };
     }
 }
