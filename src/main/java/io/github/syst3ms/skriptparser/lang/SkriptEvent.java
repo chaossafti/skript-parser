@@ -27,7 +27,7 @@ import java.util.Set;
  * </ul>
  */
 public abstract class SkriptEvent implements SyntaxElement {
-    private TriggerEventHandler eventHandler;
+    protected TriggerEventHandler eventHandler;
 
     /**
      * Creates an event handler for this event and registers it to an event manager.
