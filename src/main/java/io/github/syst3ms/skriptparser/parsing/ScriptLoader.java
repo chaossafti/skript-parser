@@ -188,6 +188,8 @@ public class ScriptLoader {
      * @return a list of {@linkplain Statement effects} inside of the section
      */
     public static List<Statement> loadItems(FileSection section, ParserState parserState, SkriptLogger logger) {
+        // I won't even try...
+
         List<Statement> items = new ArrayList<>();
         var elements = section.getElements();
         logger.recurse();
