@@ -49,6 +49,22 @@ public class SkriptEventManager {
         return triggerEventHandler;
     }
 
+    /**
+     * Wraps a Trigger into an EventHandler and registers it.
+     * @param eventName The event name
+     * @param trigger The trigger to run when this even executes
+     * @param contextPredicate The trigger will only be run when this predicate returns true.
+     * @return the created event handler
+     */
+    public TriggerEventHandler registerTrigger(@NotNull String eventName, @NotNull Trigger trigger, Predicate<TriggerContext> contextPredicate) {
+        Objects.requireNonNull(eventName);
+        Objects.requireNonNull(trigger);
+
+        TriggerEventHandler triggerEventHandler = new TriggerEventHandler(trigger, contextPredicate, this);
+        events.putOne(eventName, triggerEventHandler);
+        return triggerEventHandler;
+    }
+
     public void registerEventHandler(@NotNull Class<? extends SkriptEvent> clazz, @NotNull SkriptEventHandler eventHandler) {
         Objects.requireNonNull(eventHandler);
         Objects.requireNonNull(clazz);
@@ -69,6 +85,14 @@ public class SkriptEventManager {
         Objects.requireNonNull(eventHandler);
 
         List<SkriptEventHandler> registeredEvents = events.get(clazz.getName());
+        registeredEvents.removeIf(skriptEventInfo -> skriptEventInfo == eventHandler);
+    }
+
+    public void removeEventHandler(@NotNull String eventName, @NotNull SkriptEventHandler eventHandler) {
+        Objects.requireNonNull(eventName);
+        Objects.requireNonNull(eventHandler);
+
+        List<SkriptEventHandler> registeredEvents = events.get(eventName);
         registeredEvents.removeIf(skriptEventInfo -> skriptEventInfo == eventHandler);
     }
 
