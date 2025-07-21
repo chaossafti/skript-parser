@@ -14,7 +14,7 @@ import java.util.NoSuchElementException;
 /**
  * A simple list that is only meant to keep track of which syntaxes are used frequently, in order to preemptively check
  * them against a string that's being parsed.
- *
+ * <p>
  * To illustrate the behaviour of this class, imagine you use some syntax A 8 times, then use syntax B once. The very
  * next time the parser does the "recent syntaxes" check, it will check syntax A first, because it was used more than syntax B.
  * @param <T> the type of {@link SyntaxInfo}
@@ -25,7 +25,7 @@ public class RecentElementList<T> implements Iterable<T> {
      * hierarchy, and the "recent syntaxes" check works fine. But if there are many syntaxes in that list, then if one
      * wants to use a syntax one hasn't used before, it would take a lot of time to actually match the pattern against
      * it, since there's all the previously used syntaxes to check beforehand.
-     *
+     * <p>
      * Hence, the maximum number of recent elements is capped.
      */
     // Ideally this would be properly configurable. I'll let it be a constant for now.

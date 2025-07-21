@@ -2,6 +2,7 @@ package io.github.syst3ms.skriptparser.expressions;
 
 import io.github.syst3ms.skriptparser.Parser;
 import io.github.syst3ms.skriptparser.lang.properties.PropertyExpression;
+import org.jetbrains.annotations.NotNull;
 
 import java.math.BigInteger;
 
@@ -25,7 +26,7 @@ public class ExprLength extends PropertyExpression<Number, String> {
     }
 
     @Override
-    public Number getProperty(String owner) {
+    public Number getProperty(@NotNull String owner) {
         return BigInteger.valueOf(owner.length());
     }
 }

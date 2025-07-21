@@ -50,7 +50,7 @@ public interface Tag {
 	 * Some tags can stack on top of each other. A perfect example would be Markdown,
 	 * where one can make a text both bold and italics at the same time.
 	 * If this tag can complement such tag, you should define it here.
-	 *
+	 * <p>
 	 * Most of the times, you want a two-way connection,
 	 * for example: bold combines with italics and vice-versa.
 	 * @param tag the tag

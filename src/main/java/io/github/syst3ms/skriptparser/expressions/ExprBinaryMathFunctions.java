@@ -8,6 +8,7 @@ import io.github.syst3ms.skriptparser.registration.PatternInfos;
 import io.github.syst3ms.skriptparser.util.DoubleOptional;
 import io.github.syst3ms.skriptparser.util.math.BigDecimalMath;
 import io.github.syst3ms.skriptparser.util.math.NumberMath;
+import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
 import java.util.function.BinaryOperator;
@@ -54,7 +55,7 @@ public class ExprBinaryMathFunctions implements Expression<Number> {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public boolean init(Expression<?>[] expressions, int matchedPattern, ParseContext parseContext) {
+	public boolean init(Expression<?> @NotNull [] expressions, int matchedPattern, @NotNull ParseContext parseContext) {
 		pattern = matchedPattern;
 		first = (Expression<Number>) expressions[0];
 		second = (Expression<Number>) expressions[1];
@@ -62,7 +63,7 @@ public class ExprBinaryMathFunctions implements Expression<Number> {
 	}
 
 	@Override
-	public Number[] getValues(TriggerContext ctx) {
+	public Number[] getValues(@NotNull TriggerContext ctx) {
 		DoubleOptional<? extends Number, ? extends Number> args = DoubleOptional.ofOptional(
 				first.getSingle(ctx),
 				second.getSingle(ctx)

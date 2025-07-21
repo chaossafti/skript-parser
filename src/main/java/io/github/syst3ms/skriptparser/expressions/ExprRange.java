@@ -13,6 +13,7 @@ import io.github.syst3ms.skriptparser.types.ranges.Ranges;
 import io.github.syst3ms.skriptparser.util.ClassUtils;
 import io.github.syst3ms.skriptparser.util.CollectionUtils;
 import io.github.syst3ms.skriptparser.util.DoubleOptional;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.BiFunction;
 
@@ -38,7 +39,7 @@ public class ExprRange implements Expression<Object> {
     private RangeInfo<?, ?> range;
 
     @Override
-    public boolean init(Expression<?>[] expressions, int matchedPattern, ParseContext parseContext) {
+    public boolean init(Expression<?> @NotNull [] expressions, int matchedPattern, @NotNull ParseContext parseContext) {
         from = expressions[0];
         to = expressions[1];
         range = Ranges.getRange(ClassUtils.getCommonSuperclass(from.getReturnType(), to.getReturnType())).orElse(null);
@@ -57,7 +58,7 @@ public class ExprRange implements Expression<Object> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public Object[] getValues(TriggerContext ctx) {
+    public Object[] getValues(@NotNull TriggerContext ctx) {
         return DoubleOptional.ofOptional(from.getSingle(ctx), to.getSingle(ctx))
                 .mapToOptional((f, t) -> {
                     // This is safe... right?

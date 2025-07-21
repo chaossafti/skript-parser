@@ -10,7 +10,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Utilities for various math operations using the generic {@link Number} type
- *
+ * <p>
  * I do not claim ownership of this code, it is the intellectual property of <a href="github.com/eobermuhlner">@obermuhlner</a>.
  * @author @obermuhlner
  */
@@ -251,7 +251,7 @@ public class NumberMath {
 
     /**
      * Computes a random number between the two given bounds
-     *
+     * <p>
      * The return type is related to the parameter types in the following way :
      * <ul>
      *     <li>Two bounds of the same type will return a result of the same type</li>

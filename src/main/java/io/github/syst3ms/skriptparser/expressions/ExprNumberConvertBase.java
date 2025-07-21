@@ -5,6 +5,7 @@ import io.github.syst3ms.skriptparser.lang.Expression;
 import io.github.syst3ms.skriptparser.lang.TriggerContext;
 import io.github.syst3ms.skriptparser.parsing.ParseContext;
 import io.github.syst3ms.skriptparser.util.CollectionUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.math.BigInteger;
 import java.util.Base64;
@@ -40,7 +41,7 @@ public class ExprNumberConvertBase implements Expression<String> {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public boolean init(Expression<?>[] expressions, int matchedPattern, ParseContext parseContext) {
+	public boolean init(Expression<?> @NotNull [] expressions, int matchedPattern, @NotNull ParseContext parseContext) {
 		pattern = matchedPattern;
 		if (pattern == 0) {
 			baseFrom = "10";
@@ -58,7 +59,7 @@ public class ExprNumberConvertBase implements Expression<String> {
 	}
 
 	@Override
-	public String[] getValues(TriggerContext ctx) {
+	public String[] getValues(@NotNull TriggerContext ctx) {
 		int radixFrom = Integer.parseInt(baseFrom);
 		int radixTo = baseTo.equals("custom")
 				? base.getSingle(ctx).map(BigInteger::intValue).orElse(-1)

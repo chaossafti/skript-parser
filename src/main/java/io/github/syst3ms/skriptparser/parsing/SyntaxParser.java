@@ -66,9 +66,11 @@ public class SyntaxParser {
      * The pattern type representing {@link Object}
      */
     // Gradle requires the cast, but IntelliJ considers it redundant
+    @SuppressWarnings("RedundantCast")
     public static final PatternType<Object> OBJECT_PATTERN_TYPE = new PatternType<>((Type<Object>) TypeManager.getByClass(Object.class).orElseThrow(AssertionError::new), true);
 
     // Gradle requires the cast, but IntelliJ considers it redundant
+    @SuppressWarnings("RedundantCast")
     public static final PatternType<Object> OBJECTS_PATTERN_TYPE = new PatternType<>((Type<Object>) TypeManager.getByClass(Object.class).orElseThrow(AssertionError::new), false);
 
 

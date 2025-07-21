@@ -88,7 +88,7 @@ public class SecFilter extends ReturnSection<Boolean> implements SelfReferencing
             );
             return start();
         } else {
-            if (result.size() == 0) {
+            if (result.isEmpty()) {
                 filtered.change(ctx, ChangeMode.DELETE, new Object[0]);
             } else {
                 filtered.change(ctx, ChangeMode.SET, result.toArray());

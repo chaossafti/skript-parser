@@ -7,6 +7,7 @@ import io.github.syst3ms.skriptparser.parsing.ParseContext;
 import io.github.syst3ms.skriptparser.registration.PatternInfos;
 import io.github.syst3ms.skriptparser.util.StringUtils;
 import io.github.syst3ms.skriptparser.util.math.NumberMath;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.UnaryOperator;
 
@@ -73,14 +74,14 @@ public class ExprUnaryMathFunctions implements Expression<Number> {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public boolean init(Expression<?>[] expressions, int matchedPattern, ParseContext parseContext) {
+	public boolean init(Expression<?> @NotNull [] expressions, int matchedPattern, @NotNull ParseContext parseContext) {
 		pattern = matchedPattern;
 		number = (Expression<Number>) expressions[0];
 		return true;
 	}
 
 	@Override
-	public Number[] getValues(TriggerContext ctx) {
+	public Number[] getValues(@NotNull TriggerContext ctx) {
 		return number.getSingle(ctx)
 				.map(n -> new Number[] {PATTERNS.getInfo(pattern).apply(n)})
 				.orElse(new Number[0]);

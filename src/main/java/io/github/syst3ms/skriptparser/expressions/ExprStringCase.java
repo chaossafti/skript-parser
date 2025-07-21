@@ -5,6 +5,7 @@ import io.github.syst3ms.skriptparser.lang.Expression;
 import io.github.syst3ms.skriptparser.lang.TriggerContext;
 import io.github.syst3ms.skriptparser.parsing.ParseContext;
 import io.github.syst3ms.skriptparser.util.StringUtils;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Converts a given string into a certain case type.
@@ -60,7 +61,7 @@ public class ExprStringCase implements Expression<String> {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public boolean init(Expression<?>[] expressions, int matchedPattern, ParseContext parseContext) {
+	public boolean init(Expression<?> @NotNull [] expressions, int matchedPattern, @NotNull ParseContext parseContext) {
 		expression = (Expression<String>) expressions[0];
 		mode = parseContext.getNumericMark();
 		switch (matchedPattern) {
@@ -102,7 +103,7 @@ public class ExprStringCase implements Expression<String> {
 	}
 
 	@Override
-	public String[] getValues(TriggerContext ctx) {
+	public String[] getValues(@NotNull TriggerContext ctx) {
 		return expression.stream(ctx)
 				.map(val -> {
 					switch (type) {

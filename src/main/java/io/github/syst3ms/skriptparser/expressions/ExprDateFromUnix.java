@@ -5,6 +5,7 @@ import io.github.syst3ms.skriptparser.lang.Expression;
 import io.github.syst3ms.skriptparser.lang.TriggerContext;
 import io.github.syst3ms.skriptparser.parsing.ParseContext;
 import io.github.syst3ms.skriptparser.util.SkriptDate;
+import org.jetbrains.annotations.NotNull;
 
 import java.math.BigInteger;
 
@@ -35,14 +36,14 @@ public class ExprDateFromUnix implements Expression<SkriptDate> {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public boolean init(Expression<?>[] expressions, int matchedPattern, ParseContext parseContext) {
+	public boolean init(Expression<?> @NotNull [] expressions, int matchedPattern, @NotNull ParseContext parseContext) {
 		unix = parseContext.getNumericMark() == 1;
 		timestamp = (Expression<BigInteger>) expressions[0];
 		return true;
 	}
 
 	@Override
-	public SkriptDate[] getValues(TriggerContext ctx) {
+	public SkriptDate[] getValues(@NotNull TriggerContext ctx) {
 		return timestamp.getSingle(ctx)
 				.map(t -> new SkriptDate[] {SkriptDate.of(unix ? t.longValue() * 1000 : t.longValue())})
 				.orElse(new SkriptDate[0]);

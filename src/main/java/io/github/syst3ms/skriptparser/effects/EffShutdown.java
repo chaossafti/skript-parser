@@ -5,6 +5,7 @@ import io.github.syst3ms.skriptparser.lang.Effect;
 import io.github.syst3ms.skriptparser.lang.Expression;
 import io.github.syst3ms.skriptparser.lang.TriggerContext;
 import io.github.syst3ms.skriptparser.parsing.ParseContext;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Shuts down the whole current sessions.
@@ -25,12 +26,12 @@ public class EffShutdown extends Effect {
     }
 
     @Override
-    public boolean init(Expression<?>[] expressions, int matchedPattern, ParseContext parseContext) {
+    public boolean init(Expression<?> @NotNull [] expressions, int matchedPattern, @NotNull ParseContext parseContext) {
         return true;
     }
 
     @Override
-    public void execute(TriggerContext ctx) {
+    public void execute(@NotNull TriggerContext ctx) {
         System.exit(0);
     }
 

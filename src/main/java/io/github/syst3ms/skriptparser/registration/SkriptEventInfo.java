@@ -21,7 +21,7 @@ public class SkriptEventInfo<E extends SkriptEvent> extends SyntaxInfo<E> {
     }
 
     /**
-     * @return the list of all {@link TriggerContext}s this event is able to handle.
+     * @return the set of all {@link TriggerContext}s this event is able to handle.
      */
     public Set<Class<? extends TriggerContext>> getContexts() {
         return contexts;

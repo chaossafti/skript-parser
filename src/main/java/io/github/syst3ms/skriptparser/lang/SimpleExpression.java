@@ -53,7 +53,7 @@ public class SimpleExpression<T> implements Expression<T> {
     public String toString(TriggerContext ctx, boolean debug) {
         // If the representation is not given, the default TypeManager#toString will be used to convert each value separately
         if (representation == null) {
-            return TypeManager.toString((Object[]) function.apply(ctx));
+            return TypeManager.toString(function.apply(ctx));
         } else {
             return representation;
         }

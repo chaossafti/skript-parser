@@ -112,7 +112,7 @@ public class ExpressionElement implements PatternElement {
                 }
                 for (var nextPossibleInput : nextPossibleInputs) {
                     var text = ((TextElement) nextPossibleInput).getText();
-                    if (text.equals("")) {
+                    if (text.isEmpty()) {
                         var rest = s.substring(index);
                         var splits = splitAtSpaces(rest);
                         for (var split : splits) {

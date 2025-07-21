@@ -5,6 +5,7 @@ import io.github.syst3ms.skriptparser.lang.Expression;
 import io.github.syst3ms.skriptparser.lang.TriggerContext;
 import io.github.syst3ms.skriptparser.parsing.ParseContext;
 import io.github.syst3ms.skriptparser.registration.PatternInfos;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Predicate;
 
@@ -48,14 +49,14 @@ public class ExprStringChars implements Expression<String> {
 
     @Override
     @SuppressWarnings("unchecked")
-    public boolean init(Expression<?>[] expressions, int matchedPattern, ParseContext context) {
+    public boolean init(Expression<?> @NotNull [] expressions, int matchedPattern, @NotNull ParseContext context) {
         values = (Expression<String>) expressions[0];
         charType = matchedPattern;
         return true;
     }
 
     @Override
-    public String[] getValues(TriggerContext ctx) {
+    public String[] getValues(@NotNull TriggerContext ctx) {
         StringBuilder allChars = new StringBuilder();
         String content = String.join("", values.getValues(ctx));
         for (char character : content.toCharArray()) {

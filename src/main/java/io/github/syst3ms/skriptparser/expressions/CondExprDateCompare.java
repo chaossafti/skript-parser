@@ -6,6 +6,7 @@ import io.github.syst3ms.skriptparser.lang.TriggerContext;
 import io.github.syst3ms.skriptparser.lang.base.ConditionalExpression;
 import io.github.syst3ms.skriptparser.parsing.ParseContext;
 import io.github.syst3ms.skriptparser.util.SkriptDate;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
 
@@ -35,7 +36,7 @@ public class CondExprDateCompare extends ConditionalExpression {
 
     @SuppressWarnings("unchecked")
     @Override
-    public boolean init(Expression<?>[] expressions, int matchedPattern, ParseContext parseContext) {
+    public boolean init(Expression<?> @NotNull [] expressions, int matchedPattern, @NotNull ParseContext parseContext) {
         date = (Expression<SkriptDate>) expressions[0];
         duration = (Expression<Duration>) expressions[1];
         setNegated(matchedPattern == 1);
@@ -43,7 +44,7 @@ public class CondExprDateCompare extends ConditionalExpression {
     }
 
     @Override
-    public boolean check(TriggerContext ctx) {
+    public boolean check(@NotNull TriggerContext ctx) {
         return date.check(
                 ctx,
                 toCheck -> duration.getSingle(ctx)

@@ -12,6 +12,7 @@ import io.github.syst3ms.skriptparser.parsing.SkriptParserException;
 import io.github.syst3ms.skriptparser.types.TypeManager;
 import io.github.syst3ms.skriptparser.types.conversions.Converters;
 import io.github.syst3ms.skriptparser.util.StringUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
@@ -36,7 +37,7 @@ public class EffReturn extends Effect {
     private Expression<?> returned;
 
     @Override
-    public boolean init(Expression<?>[] expressions, int matchedPattern, ParseContext parseContext) {
+    public boolean init(Expression<?> @NotNull [] expressions, int matchedPattern, @NotNull ParseContext parseContext) {
         returned = expressions[0];
         var logger = parseContext.getLogger();
         var sec = Expression.getLinkedSection(parseContext.getParserState(), ReturnSection.class);
@@ -73,12 +74,12 @@ public class EffReturn extends Effect {
     }
 
     @Override
-    protected void execute(TriggerContext ctx) {
+    protected void execute(@NotNull TriggerContext ctx) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public Optional<? extends Statement> walk(TriggerContext ctx) {
+    public Optional<? extends Statement> walk(@NotNull TriggerContext ctx) {
         section.setReturned(returned.getValues(ctx));
         section.step(this);
         return Optional.of(section);

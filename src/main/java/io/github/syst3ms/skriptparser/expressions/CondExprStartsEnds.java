@@ -5,6 +5,7 @@ import io.github.syst3ms.skriptparser.lang.Expression;
 import io.github.syst3ms.skriptparser.lang.TriggerContext;
 import io.github.syst3ms.skriptparser.lang.base.ConditionalExpression;
 import io.github.syst3ms.skriptparser.parsing.ParseContext;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Check if a given string starts or ends with a certain string.
@@ -33,7 +34,7 @@ public class CondExprStartsEnds extends ConditionalExpression {
 
     @SuppressWarnings("unchecked")
     @Override
-    public boolean init(Expression<?>[] expressions, int matchedPattern, ParseContext parseContext) {
+    public boolean init(Expression<?> @NotNull [] expressions, int matchedPattern, @NotNull ParseContext parseContext) {
         expression = (Expression<String>) expressions[0];
         value = (Expression<String>) expressions[1];
         start = parseContext.getNumericMark() == 0;
@@ -42,7 +43,7 @@ public class CondExprStartsEnds extends ConditionalExpression {
     }
 
     @Override
-    public boolean check(TriggerContext ctx) {
+    public boolean check(@NotNull TriggerContext ctx) {
         return expression.check(
                 ctx,
                 toCheck -> value.check(ctx, toMatch -> start ? toCheck.startsWith(toMatch) : toCheck.endsWith(toMatch)),

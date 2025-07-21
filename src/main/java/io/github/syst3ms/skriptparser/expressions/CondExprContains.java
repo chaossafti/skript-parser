@@ -10,6 +10,7 @@ import io.github.syst3ms.skriptparser.types.comparisons.Comparator;
 import io.github.syst3ms.skriptparser.types.comparisons.Comparators;
 import io.github.syst3ms.skriptparser.types.comparisons.Relation;
 import io.github.syst3ms.skriptparser.util.DoubleOptional;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -42,7 +43,7 @@ public class CondExprContains extends ConditionalExpression {
 
     @SuppressWarnings("unchecked")
     @Override
-    public boolean init(Expression<?>[] expressions, int matchedPattern, ParseContext parseContext) {
+    public boolean init(Expression<?> @NotNull [] expressions, int matchedPattern, @NotNull ParseContext parseContext) {
         first = (Expression<Object>) expressions[0];
         second = (Expression<Object>) expressions[1];
         comparator = (Comparator<Object, Object>) Comparators.getComparator(first.getReturnType(), second.getReturnType()).orElse(null);
@@ -76,7 +77,7 @@ public class CondExprContains extends ConditionalExpression {
     }
 
     @Override
-    public boolean check(TriggerContext ctx) {
+    public boolean check(@NotNull TriggerContext ctx) {
         if (onlyString) {
             return isNegated() != DoubleOptional.ofOptional(first.getSingle(ctx), second.getSingle(ctx))
                     .map(toCheck -> (String) toCheck, toMatch -> (String) toMatch)

@@ -3,12 +3,8 @@ package io.github.syst3ms.skriptparser.lang;
 import io.github.syst3ms.skriptparser.file.FileSection;
 import io.github.syst3ms.skriptparser.log.SkriptLogger;
 import io.github.syst3ms.skriptparser.parsing.ParseContext;
-import io.github.syst3ms.skriptparser.parsing.ParserState;
-import io.github.syst3ms.skriptparser.registration.SkriptRegistration;
 
-import java.util.Arrays;
 import io.github.syst3ms.skriptparser.parsing.ParserState;
-import io.github.syst3ms.skriptparser.registration.SkriptRegistration;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
@@ -33,7 +29,7 @@ public interface SyntaxElement {
      * @see io.github.syst3ms.skriptparser.registration.SkriptRegistration
      * @see ParseContext
      */
-    boolean init(Expression<?>[] expressions, int matchedPattern, ParseContext parseContext);
+    boolean init(Expression<?>[] expressions, int matchedPattern,  ParseContext parseContext);
 
     /**
      * @param ctx the event
@@ -74,30 +70,5 @@ public interface SyntaxElement {
         }
         return false;
     }
-    String toString(TriggerContext ctx, boolean debug);
 
-    /**
-     * Checks whether this syntax element is inside of specific given {@link CodeSection}s.
-     *
-     * This method shouldn't be used for {@linkplain SyntaxElement}s that should only work with specific {@link TriggerContext}s.
-     * For this purpose, prefer {@link ParseContext#getParserState()} used in conjunction with {@link ParserState#getCurrentContexts()}.
-     * @param parseContext the parser context
-     * @param isStrict true if the required section has to be the one directly enclosing this SyntaxElement
-     * @param requiredSections a list of the classes of all the {@link CodeSection}s this SyntaxElement should be restricted to
-     * @return whether this Syntax element is in a given {@link CodeSection} or not
-     * @see ParserState#getCurrentContexts()
-     */
-    @SafeVarargs
-    static boolean checkIsInSection(ParseContext parseContext, boolean isStrict, Class<? extends CodeSection>... requiredSections) {
-        var currentSections = parseContext.getParserState().getCurrentSections();
-        var sections = Arrays.asList(requiredSections);
-        var limit = isStrict ? 1 : currentSections.size();
-        for (var i = 0; i < limit; i++) {
-            var sec = currentSections.get(i);
-            if (sections.contains(sec.getClass())) {
-                return true;
-            }
-        }
-        return false;
-    }
 }

@@ -77,7 +77,7 @@ public class Time implements Comparable<Time> {
      */
     public static Time of(SkriptDate date) {
         var lcd = date.toLocalDateTime();
-        return new Time(LocalTime.of(lcd.getHour(), lcd.getMinute(), lcd.getSecond(), lcd.getNano()));
+        return new Time(lcd.toLocalTime());
     }
 
     /**

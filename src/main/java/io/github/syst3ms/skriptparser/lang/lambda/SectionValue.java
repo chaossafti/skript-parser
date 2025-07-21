@@ -63,7 +63,7 @@ public abstract class SectionValue<S extends ArgumentSection, T> implements Expr
     /**
      * This method is run after the section linked to this {@code SectionValue} is identified, and should be used to
      * make some additional verifications/setup operations on the linked {@link ArgumentSection} that was identified.
-     *
+     * <p>
      * By default, this function always returns {@code true} with no added operations.
      *
      * @param section the section that was identified as corresponding to this {@code SectionValue}
@@ -76,12 +76,12 @@ public abstract class SectionValue<S extends ArgumentSection, T> implements Expr
 
     /**
      * Returns the selector function for this {@code SectionValue}.
-     *
+     * <p>
      * This function is supplied with a list of all the sections of the type described by {@link #getSectionClass()},
      * and returns an Optional describing the section that this {@code SectionValue} should be linked to, or an empty
      * Optional if no matching section was found. This is useful for targeting a specific section out of multiple
      * surrounding ones based on criteria specific to the implementation.
-     *
+     * <p>
      * By default, this always picks the first matching function (i.e the innermost one), if there is one.
      *
      * @return the selector function for this {@code SectionValue}.

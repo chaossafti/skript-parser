@@ -15,7 +15,7 @@ public class TestRegistration {
 
 	public static void register() {
 		try {
-			Field regField = Parser.class.getDeclaredField("registration");
+			Field regField = Parser.class.getDeclaredField("REGISTRATION");
 			regField.setAccessible(true);
 			regField.set(null, new SkriptRegistration(new TestAddon()));
 		} catch (NoSuchFieldException | IllegalAccessException e) {

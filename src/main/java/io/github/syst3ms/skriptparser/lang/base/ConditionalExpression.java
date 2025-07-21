@@ -17,7 +17,7 @@ import io.github.syst3ms.skriptparser.sections.SecWhile;
  * </ol>
  * The simplest way to use a value of a conditional expression as if it were a regular boolean expression is to use
  * the {@code whether %=boolean%} expression.
- *
+ * <p>
  * Other, non-conditional boolean expressions should implement {@link Expression<Boolean>}
  * @see ExprWhether
  * @see SecConditional

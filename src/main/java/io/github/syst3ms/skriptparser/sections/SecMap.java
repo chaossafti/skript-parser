@@ -89,7 +89,7 @@ public class SecMap extends ReturnSection<Object> implements SelfReferencing {
 			);
 			return start();
 		} else {
-			if (result.size() == 0) {
+			if (result.isEmpty()) {
 				mapped.change(ctx, ChangeMode.DELETE, new Object[0]);
 			} else {
 				mapped.change(ctx, ChangeMode.SET, result.toArray());

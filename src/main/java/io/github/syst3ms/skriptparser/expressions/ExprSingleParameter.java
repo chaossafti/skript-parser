@@ -6,6 +6,7 @@ import io.github.syst3ms.skriptparser.lang.TriggerContext;
 import io.github.syst3ms.skriptparser.lang.lambda.ArgumentSection;
 import io.github.syst3ms.skriptparser.lang.lambda.SectionValue;
 import io.github.syst3ms.skriptparser.parsing.ParseContext;
+import org.jetbrains.annotations.NotNull;
 
 public class ExprSingleParameter extends SectionValue<ArgumentSection, Object> {
     static {
@@ -18,12 +19,12 @@ public class ExprSingleParameter extends SectionValue<ArgumentSection, Object> {
     }
 
     @Override
-    public boolean preInitialize(Expression<?>[] expressions, int matchedPattern, ParseContext parseContext) {
+    public boolean preInitialize(Expression<?> @NotNull [] expressions, int matchedPattern, @NotNull ParseContext parseContext) {
         return true;
     }
 
     @Override
-    public Object[] getSectionValues(ArgumentSection section, TriggerContext ctx) {
+    public Object[] getSectionValues(@NotNull ArgumentSection section, @NotNull TriggerContext ctx) {
         if (section.getArguments().length == 1) {
             return section.getArguments();
         } else {

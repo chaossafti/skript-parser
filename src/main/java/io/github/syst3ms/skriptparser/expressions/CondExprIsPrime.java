@@ -5,6 +5,7 @@ import io.github.syst3ms.skriptparser.lang.properties.ConditionalType;
 import io.github.syst3ms.skriptparser.lang.properties.PropertyConditional;
 import io.github.syst3ms.skriptparser.util.math.BigDecimalMath;
 import io.github.syst3ms.skriptparser.util.math.NumberMath;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Check if a given number is a prime number.
@@ -26,7 +27,7 @@ public class CondExprIsPrime extends PropertyConditional<Number> {
 	}
 
 	@Override
-	public boolean check(Number performer) {
+	public boolean check(@NotNull Number performer) {
 		var bd = BigDecimalMath.getBigDecimal(performer);
 		return bd.signum() != -1
 				&& BigDecimalMath.isIntValue(bd)

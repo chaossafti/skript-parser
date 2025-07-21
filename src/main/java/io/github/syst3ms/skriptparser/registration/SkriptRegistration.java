@@ -489,7 +489,6 @@ public class SkriptRegistration {
      * @param usage the usage
      * @param <C> the TriggerContext class
      * @param <T> the ContextValue's return type
-     * @return this {@link EventRegistrar}
      * @see Usage#EXPRESSION_ONLY
      */
     public <C extends TriggerContext, T> void addContextType(Class<C> context, Class<T> returnType, Function<C, T> function, State state, Usage usage) {

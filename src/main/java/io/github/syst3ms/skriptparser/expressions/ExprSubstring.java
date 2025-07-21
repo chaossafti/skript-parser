@@ -5,6 +5,7 @@ import io.github.syst3ms.skriptparser.lang.Expression;
 import io.github.syst3ms.skriptparser.lang.TriggerContext;
 import io.github.syst3ms.skriptparser.parsing.ParseContext;
 import io.github.syst3ms.skriptparser.util.DoubleOptional;
+import org.jetbrains.annotations.NotNull;
 
 import java.math.BigInteger;
 
@@ -36,7 +37,7 @@ public class ExprSubstring implements Expression<String> {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public boolean init(Expression<?>[] expressions, int matchedPattern, ParseContext parseContext) {
+	public boolean init(Expression<?> @NotNull [] expressions, int matchedPattern, @NotNull ParseContext parseContext) {
 		pattern = matchedPattern;
 		switch (pattern) {
 			case 0:
@@ -65,7 +66,7 @@ public class ExprSubstring implements Expression<String> {
 	}
 
 	@Override
-	public String[] getValues(TriggerContext ctx) {
+	public String[] getValues(@NotNull TriggerContext ctx) {
 		if (pattern == 0) {
 			return value.getSingle(ctx)
 					.flatMap(val -> DoubleOptional.ofOptional(lower.getSingle(ctx), upper.getSingle(ctx))

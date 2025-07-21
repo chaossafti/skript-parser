@@ -5,6 +5,7 @@ import io.github.syst3ms.skriptparser.lang.Expression;
 import io.github.syst3ms.skriptparser.lang.TriggerContext;
 import io.github.syst3ms.skriptparser.parsing.ParseContext;
 import io.github.syst3ms.skriptparser.util.math.NumberMath;
+import org.jetbrains.annotations.NotNull;
 
 import java.math.BigInteger;
 import java.util.Arrays;
@@ -45,7 +46,7 @@ public class ExprElement implements Expression<Object> {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public boolean init(Expression<?>[] expressions, int matchedPattern, ParseContext parseContext) {
+	public boolean init(Expression<?> @NotNull [] expressions, int matchedPattern, @NotNull ParseContext parseContext) {
 		pattern = matchedPattern;
 		parseMark = parseContext.getNumericMark();
 
@@ -74,7 +75,7 @@ public class ExprElement implements Expression<Object> {
 	}
 
 	@Override
-	public Object[] getValues(TriggerContext ctx) {
+	public Object[] getValues(@NotNull TriggerContext ctx) {
 		Object[] values = expr.getValues(ctx);
 		if (values.length == 0)
 			return new Object[0];

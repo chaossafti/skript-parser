@@ -4,6 +4,7 @@ import io.github.syst3ms.skriptparser.Parser;
 import io.github.syst3ms.skriptparser.lang.Expression;
 import io.github.syst3ms.skriptparser.lang.TriggerContext;
 import io.github.syst3ms.skriptparser.parsing.ParseContext;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -35,14 +36,14 @@ public class ExprMutableList implements Expression<Object> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public boolean init(Expression<?>[] expressions, int matchedPattern, ParseContext parseContext) {
+    public boolean init(Expression<?> @NotNull [] expressions, int matchedPattern, @NotNull ParseContext parseContext) {
         list = (Expression<Object>) expressions[0];
         type = matchedPattern;
         return true;
     }
 
     @Override
-    public Object[] getValues(TriggerContext ctx) {
+    public Object[] getValues(@NotNull TriggerContext ctx) {
         Object[] values = list.getValues(ctx);
         switch (type) {
             case 0:

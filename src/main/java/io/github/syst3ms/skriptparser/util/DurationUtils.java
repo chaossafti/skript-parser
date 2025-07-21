@@ -81,7 +81,7 @@ public class DurationUtils {
             if (millis == -1)
                 return Optional.empty();
 
-            duration += delta * millis;
+            duration += (long) (delta * millis);
         }
         return Optional.of(Duration.ofMillis(duration));
     }

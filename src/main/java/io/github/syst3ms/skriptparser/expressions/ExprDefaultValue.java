@@ -4,6 +4,7 @@ import io.github.syst3ms.skriptparser.Parser;
 import io.github.syst3ms.skriptparser.lang.Expression;
 import io.github.syst3ms.skriptparser.lang.TriggerContext;
 import io.github.syst3ms.skriptparser.parsing.ParseContext;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A shorthand expression for giving things a default value. If the first thing isn't set, the second thing will be returned.
@@ -27,14 +28,14 @@ public class ExprDefaultValue implements Expression<Object> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public boolean init(Expression<?>[] expressions, int matchedPattern, ParseContext parseContext) {
+    public boolean init(Expression<?> @NotNull [] expressions, int matchedPattern, @NotNull ParseContext parseContext) {
         firstValue = (Expression<Object>) expressions[0];
         secondValue = (Expression<Object>) expressions[1];
         return true;
     }
 
     @Override
-    public Object[] getValues(TriggerContext ctx) {
+    public Object[] getValues(@NotNull TriggerContext ctx) {
         return firstValue.getValues(ctx).length != 0
                 ? firstValue.getValues(ctx)
                 : secondValue.getValues(ctx);

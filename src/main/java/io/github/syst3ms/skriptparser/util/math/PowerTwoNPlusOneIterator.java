@@ -5,7 +5,7 @@ import java.math.MathContext;
 
 /**
  * {@link PowerIterator} to calculate x<sup>2*n+1</sup>.
- *
+ * <p>
  * I do not claim ownership of this code, it is the intellectual property of <a href="github.com/eobermuhlner">@obermuhlner</a>.
  * @author @obermuhlner
  */

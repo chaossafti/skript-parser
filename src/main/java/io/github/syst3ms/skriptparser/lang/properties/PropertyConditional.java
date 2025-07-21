@@ -16,7 +16,7 @@ import io.github.syst3ms.skriptparser.registration.SyntaxManager;
  *     <li>{@code something has something}</li>
  * </ul>
  * The plural and negated forms are also supported.
- *
+ * <p>
  * The gains of using this class:
  * <ul>
  *     <li>There is a useful {@link #toString(TriggerContext, boolean, String) toString()}

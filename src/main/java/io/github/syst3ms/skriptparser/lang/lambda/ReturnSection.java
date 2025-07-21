@@ -38,7 +38,7 @@ public abstract class ReturnSection<T> extends ArgumentSection {
     public abstract Class<? extends T> getReturnType();
 
     /**
-     * @return the number of values that should be returned from inside this section
+     * @return flag for if this section returns a single value, or multiple.
      */
     public abstract boolean isSingle();
 }

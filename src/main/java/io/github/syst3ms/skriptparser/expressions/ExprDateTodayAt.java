@@ -6,6 +6,7 @@ import io.github.syst3ms.skriptparser.lang.TriggerContext;
 import io.github.syst3ms.skriptparser.parsing.ParseContext;
 import io.github.syst3ms.skriptparser.util.SkriptDate;
 import io.github.syst3ms.skriptparser.util.Time;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
@@ -35,14 +36,14 @@ public class ExprDateTodayAt implements Expression<SkriptDate> {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public boolean init(Expression<?>[] expressions, int matchedPattern, ParseContext parseContext) {
+	public boolean init(Expression<?> @NotNull [] expressions, int matchedPattern, @NotNull ParseContext parseContext) {
 		if (expressions.length > 0)
 			time = (Expression<Time>) expressions[0];
  		return true;
 	}
 
 	@Override
-	public SkriptDate[] getValues(TriggerContext ctx) {
+	public SkriptDate[] getValues(@NotNull TriggerContext ctx) {
 		if (time != null)
 			return time.getSingle(ctx)
 					.map(ti -> new SkriptDate[] {SkriptDate.today().plus(Duration.ofMillis(ti.toMillis()))})

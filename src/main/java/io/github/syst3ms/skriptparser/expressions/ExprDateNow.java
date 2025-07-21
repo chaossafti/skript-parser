@@ -5,6 +5,7 @@ import io.github.syst3ms.skriptparser.lang.Expression;
 import io.github.syst3ms.skriptparser.lang.TriggerContext;
 import io.github.syst3ms.skriptparser.parsing.ParseContext;
 import io.github.syst3ms.skriptparser.util.SkriptDate;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
 
@@ -30,13 +31,13 @@ public class ExprDateNow implements Expression<SkriptDate> {
 	private int mark;
 
 	@Override
-	public boolean init(Expression<?>[] expressions, int matchedPattern, ParseContext parseContext) {
+	public boolean init(Expression<?> @NotNull [] expressions, int matchedPattern, @NotNull ParseContext parseContext) {
 		mark = parseContext.getNumericMark();
 		return true;
 	}
 
 	@Override
-	public SkriptDate[] getValues(TriggerContext ctx) {
+	public SkriptDate[] getValues(@NotNull TriggerContext ctx) {
 		switch (mark) {
 			case 0:
 				return new SkriptDate[] {SkriptDate.now().minus(Duration.ofDays(1))};

@@ -5,6 +5,7 @@ import io.github.syst3ms.skriptparser.lang.Expression;
 import io.github.syst3ms.skriptparser.lang.TriggerContext;
 import io.github.syst3ms.skriptparser.parsing.ParseContext;
 import io.github.syst3ms.skriptparser.util.SkriptDate;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
 
@@ -37,14 +38,14 @@ public class ExprDurationSinceUntil implements Expression<Duration> {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public boolean init(Expression<?>[] expressions, int matchedPattern, ParseContext parseContext) {
+	public boolean init(Expression<?> @NotNull [] expressions, int matchedPattern, @NotNull ParseContext parseContext) {
 		date = (Expression<SkriptDate>) expressions[0];
 		past = matchedPattern == 0;
 		return true;
 	}
 
 	@Override
-	public Duration[] getValues(TriggerContext ctx) {
+	public Duration[] getValues(@NotNull TriggerContext ctx) {
 		return date.getSingle(ctx)
 				.filter(da -> da.compareTo(SkriptDate.now()) < 0 || !past)
 				.map(da -> new Duration[] {da.difference(SkriptDate.now())})

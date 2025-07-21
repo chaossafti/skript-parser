@@ -9,6 +9,7 @@ import io.github.syst3ms.skriptparser.parsing.ParseContext;
 import io.github.syst3ms.skriptparser.types.Type;
 import io.github.syst3ms.skriptparser.types.TypeManager;
 import io.github.syst3ms.skriptparser.util.SkriptDate;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.text.ParseException;
@@ -47,7 +48,7 @@ public class ExprParseAs implements Expression<Object> {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public boolean init(Expression<?>[] expressions, int matchedPattern, ParseContext parseContext) {
+	public boolean init(Expression<?> @NotNull [] expressions, int matchedPattern, @NotNull ParseContext parseContext) {
 		expr = (Expression<String>) expressions[0];
 		type = (Expression<Type<?>>) expressions[1];
 		parseTo = ((Literal<Type<?>>) expressions[1]).getSingle()
@@ -67,7 +68,7 @@ public class ExprParseAs implements Expression<Object> {
 	}
 
 	@Override
-	public Object[] getValues(TriggerContext ctx) {
+	public Object[] getValues(@NotNull TriggerContext ctx) {
 		return expr.getSingle(ctx)
 				.map(s -> {
 					if (parseTo == SkriptDate.class) {

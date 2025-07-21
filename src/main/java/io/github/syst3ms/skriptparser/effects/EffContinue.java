@@ -10,6 +10,7 @@ import io.github.syst3ms.skriptparser.lang.control.Finishing;
 import io.github.syst3ms.skriptparser.lang.lambda.ArgumentSection;
 import io.github.syst3ms.skriptparser.log.ErrorType;
 import io.github.syst3ms.skriptparser.parsing.ParseContext;
+import org.jetbrains.annotations.NotNull;
 
 import java.math.BigInteger;
 import java.util.List;
@@ -38,7 +39,7 @@ public class EffContinue extends Effect {
 
     @SuppressWarnings("unchecked")
     @Override
-    public boolean init(Expression<?>[] expressions, int matchedPattern, ParseContext parseContext) {
+    public boolean init(Expression<?> @NotNull [] expressions, int matchedPattern, @NotNull ParseContext parseContext) {
         if (expressions.length == 1)
             position = (Expression<BigInteger>) expressions[0];
 
@@ -46,7 +47,7 @@ public class EffContinue extends Effect {
                 .filter(sec -> sec instanceof Continuable)
                 .map(sec -> (Continuable) sec)
                 .collect(Collectors.toList());
-        if (sections.size() == 0) {
+        if (sections.isEmpty()) {
             parseContext.getLogger().error("You cannot use the 'continue'-effect here", ErrorType.SEMANTIC_ERROR);
             return false;
         }
@@ -54,12 +55,12 @@ public class EffContinue extends Effect {
     }
 
     @Override
-    public void execute(TriggerContext ctx) {
+    public void execute(@NotNull TriggerContext ctx) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-	public Optional<? extends Statement> walk(TriggerContext ctx) {
+	public Optional<? extends Statement> walk(@NotNull TriggerContext ctx) {
         // Indices start at 1
         int pos = position != null ? position.getSingle(ctx)
                 .filter(val -> val.compareTo(BigInteger.ZERO) > 0 && val.compareTo(BigInteger.valueOf(sections.size())) <= 0)

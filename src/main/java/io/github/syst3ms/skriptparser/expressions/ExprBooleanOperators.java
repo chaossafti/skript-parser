@@ -4,6 +4,7 @@ import io.github.syst3ms.skriptparser.Parser;
 import io.github.syst3ms.skriptparser.lang.Expression;
 import io.github.syst3ms.skriptparser.lang.TriggerContext;
 import io.github.syst3ms.skriptparser.parsing.ParseContext;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
@@ -37,7 +38,7 @@ public class ExprBooleanOperators implements Expression<Boolean> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public boolean init(Expression<?>[] expressions, int matchedPattern, ParseContext parseContext) {
+    public boolean init(Expression<?> @NotNull [] expressions, int matchedPattern, @NotNull ParseContext parseContext) {
         pattern = matchedPattern;
         first = (Expression<Boolean>) expressions[0];
         if (expressions.length > 1) {
@@ -47,7 +48,7 @@ public class ExprBooleanOperators implements Expression<Boolean> {
     }
 
     @Override
-    public Boolean[] getValues(TriggerContext ctx) {
+    public Boolean[] getValues(@NotNull TriggerContext ctx) {
         assert second != null || pattern == 0;
         return first.getSingle(ctx)
                 .flatMap(f -> pattern == 0

@@ -4,9 +4,7 @@ import io.github.syst3ms.skriptparser.file.FileElement;
 import io.github.syst3ms.skriptparser.file.FileParser;
 import io.github.syst3ms.skriptparser.file.FileSection;
 import io.github.syst3ms.skriptparser.file.VoidElement;
-import io.github.syst3ms.skriptparser.lang.*;
 import io.github.syst3ms.skriptparser.lang.event.SkriptEventManager;
-import io.github.syst3ms.skriptparser.log.ErrorContext;
 import io.github.syst3ms.skriptparser.lang.Statement;
 import io.github.syst3ms.skriptparser.lang.Trigger;
 import io.github.syst3ms.skriptparser.lang.UnloadedTrigger;
@@ -23,10 +21,6 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Contains the logic for loading, parsing and interpreting entire script files
@@ -93,20 +87,18 @@ public class ScriptLoader {
     public static ScriptLoadResult loadScript(@NotNull Script script, SkriptLogger logger) {
 
         // read the file and parse the elements
-        var parser = new FileParser();
         List<String> lines;
 
         // read the liens within the file
         try {
             lines = FileUtils.readAllLines(script.getPath());
-            logger.logOutput();
         } catch (IOException e) {
             e.printStackTrace();
             return new ScriptLoadResult(null);
         }
 
         // parse the lines into FileElements
-        List<FileElement> elements = parser.parseFileLines(script.getName(),
+        List<FileElement> elements = FileParser.parseFileLines(script.getName(),
                 lines,
                 0,
                 1,
@@ -137,7 +129,6 @@ public class ScriptLoader {
 
         // collect structures/events and parse them
         for (var element : elements) {
-            logger.logOutput();
             logger.nextLine();
             if(element instanceof VoidElement)
                 continue;
@@ -161,7 +152,6 @@ public class ScriptLoader {
         // loops all the structures/events inside the file
         for (UnloadedTrigger unloaded : unloadedTriggers) {
             // resets logger
-            logger.logOutput();
             logger.setLine(unloaded.getLine());
 
             // gets the trigger, the object holding the code of the structure
@@ -183,7 +173,6 @@ public class ScriptLoader {
 
         script.load(triggers);
 
-        logger.logOutput();
         return new ScriptLoadResult(logger.close(), script);
     }
 

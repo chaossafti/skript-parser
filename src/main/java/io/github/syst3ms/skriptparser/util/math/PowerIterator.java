@@ -11,7 +11,7 @@ import java.math.BigDecimal;
  * <p>{@link #getCurrentPower()} will be called first to retrieve the initial value.</p>
  * 
  * For later iterations {@link #calculateNextPower()} will be called before {@link #getCurrentPower()}.
- *
+ * <p>
  * I do not claim ownership of this code, it is the intellectual property of <a href="github.com/eobermuhlner">@obermuhlner</a>.
  * @author @obermuhlner
  */

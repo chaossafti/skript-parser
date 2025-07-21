@@ -4,6 +4,7 @@ import io.github.syst3ms.skriptparser.Parser;
 import io.github.syst3ms.skriptparser.lang.Expression;
 import io.github.syst3ms.skriptparser.lang.TriggerContext;
 import io.github.syst3ms.skriptparser.parsing.ParseContext;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A wrapper that turns a condition into a boolean expression than can be used anywhere.
@@ -27,13 +28,13 @@ public class ExprWhether implements Expression<Boolean> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public boolean init(Expression<?>[] expressions, int matchedPattern, ParseContext parseContext) {
+    public boolean init(Expression<?> @NotNull [] expressions, int matchedPattern, @NotNull ParseContext parseContext) {
         condition = (Expression<Boolean>) expressions[0];
         return true;
     }
 
     @Override
-    public Boolean[] getValues(TriggerContext ctx) {
+    public Boolean[] getValues(@NotNull TriggerContext ctx) {
         return condition.getValues(ctx);
     }
 

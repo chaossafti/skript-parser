@@ -6,6 +6,7 @@ import io.github.syst3ms.skriptparser.lang.TriggerContext;
 import io.github.syst3ms.skriptparser.lang.properties.PropertyExpression;
 import io.github.syst3ms.skriptparser.parsing.ParseContext;
 import io.github.syst3ms.skriptparser.util.SkriptDate;
+import org.jetbrains.annotations.NotNull;
 
 import java.math.BigInteger;
 
@@ -35,19 +36,19 @@ public class ExprDateTimestamp extends PropertyExpression<Number, SkriptDate> {
 	private boolean unix;
 
 	@Override
-	public boolean init(Expression<?>[] expressions, int matchedPattern, ParseContext parseContext) {
+	public boolean init(Expression<?> @NotNull [] expressions, int matchedPattern, @NotNull ParseContext parseContext) {
 		unix = parseContext.getNumericMark() == 1;
 		return super.init(expressions, matchedPattern, parseContext);
 	}
 
 	@Override
-	public Number getProperty(SkriptDate owner) {
+	public Number getProperty(@NotNull SkriptDate owner) {
 		return unix ? BigInteger.valueOf(Math.floorDiv(owner.getTimestamp(), 1000))
 				: BigInteger.valueOf(owner.getTimestamp());
 	}
 
 	@Override
-	public String toString(TriggerContext ctx, boolean debug) {
+	public String toString(@NotNull TriggerContext ctx, boolean debug) {
 		return toString(ctx, debug, (unix ? "unix " : "") + "timestamp");
 	}
 }

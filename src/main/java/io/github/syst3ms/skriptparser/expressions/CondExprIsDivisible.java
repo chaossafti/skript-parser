@@ -7,6 +7,7 @@ import io.github.syst3ms.skriptparser.lang.properties.ConditionalType;
 import io.github.syst3ms.skriptparser.lang.properties.PropertyConditional;
 import io.github.syst3ms.skriptparser.parsing.ParseContext;
 import io.github.syst3ms.skriptparser.util.math.BigDecimalMath;
+import org.jetbrains.annotations.NotNull;
 
 import java.math.BigInteger;
 
@@ -35,13 +36,13 @@ public class CondExprIsDivisible extends PropertyConditional<Number> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public boolean init(Expression<?>[] expressions, int matchedPattern, ParseContext parseContext) {
+    public boolean init(Expression<?> @NotNull [] expressions, int matchedPattern, @NotNull ParseContext parseContext) {
         divider = (Expression<BigInteger>) expressions[1];
         return super.init(expressions, matchedPattern, parseContext);
     }
 
     @Override
-    public boolean check(TriggerContext ctx) {
+    public boolean check(@NotNull TriggerContext ctx) {
         return getPerformer().check(
                 ctx,
                 performer -> divider.getSingle(ctx)
@@ -53,7 +54,7 @@ public class CondExprIsDivisible extends PropertyConditional<Number> {
     }
 
     @Override
-    public String toString(TriggerContext ctx, boolean debug) {
+    public String toString(@NotNull TriggerContext ctx, boolean debug) {
         return toString(ctx, debug, "divisible by " + divider.toString(ctx, debug));
     }
 }

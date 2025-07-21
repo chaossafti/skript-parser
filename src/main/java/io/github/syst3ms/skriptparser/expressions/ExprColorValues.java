@@ -6,6 +6,7 @@ import io.github.syst3ms.skriptparser.lang.TriggerContext;
 import io.github.syst3ms.skriptparser.lang.properties.PropertyExpression;
 import io.github.syst3ms.skriptparser.parsing.ParseContext;
 import io.github.syst3ms.skriptparser.util.color.Color;
+import org.jetbrains.annotations.NotNull;
 
 import java.math.BigInteger;
 
@@ -32,13 +33,13 @@ public class ExprColorValues extends PropertyExpression<Object, Color> {
 	private int mark;
 
 	@Override
-	public boolean init(Expression<?>[] expressions, int matchedPattern, ParseContext parseContext) {
+	public boolean init(Expression<?> @NotNull [] expressions, int matchedPattern, @NotNull ParseContext parseContext) {
 		mark = parseContext.getNumericMark();
 		return super.init(expressions, matchedPattern, parseContext);
 	}
 
 	@Override
-	public Object getProperty(Color owner) {
+	public Object getProperty(@NotNull Color owner) {
 		switch (mark) {
 			case 0:
 				return owner.getHex();
@@ -61,7 +62,7 @@ public class ExprColorValues extends PropertyExpression<Object, Color> {
 	}
 
 	@Override
-	public String toString(TriggerContext ctx, boolean debug) {
+	public String toString(@NotNull TriggerContext ctx, boolean debug) {
 		return toString(ctx, debug, new String[] {"hex", "red", "green", "blue", "alpha"}[mark] + " value");
 	}
 }

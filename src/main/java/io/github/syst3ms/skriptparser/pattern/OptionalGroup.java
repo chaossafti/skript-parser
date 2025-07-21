@@ -38,6 +38,6 @@ public class OptionalGroup implements PatternElement {
 
     @Override
     public String toString() {
-        return "[" + element.toString() + "]";
+        return "[" + element + "]";
     }
 }

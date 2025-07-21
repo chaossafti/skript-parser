@@ -43,7 +43,7 @@ public class ChoiceElement {
     private static String getEffectiveMark(PatternElement element, String mark) {
         if (mark.isEmpty()) {
             var simplified = PatternElement.getKeywords(element);
-            return simplified.size() > 0 ? simplified.get(0) : element.toString();
+            return !simplified.isEmpty() ? simplified.get(0) : element.toString();
         }
         return mark;
     }

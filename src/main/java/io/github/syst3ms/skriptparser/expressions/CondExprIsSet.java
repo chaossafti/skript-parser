@@ -3,6 +3,7 @@ package io.github.syst3ms.skriptparser.expressions;
 import io.github.syst3ms.skriptparser.Parser;
 import io.github.syst3ms.skriptparser.lang.properties.ConditionalType;
 import io.github.syst3ms.skriptparser.lang.properties.PropertyConditional;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Check if a given expression is set (null on the Java side) or not.
@@ -24,7 +25,7 @@ public class CondExprIsSet extends PropertyConditional<Object> {
     }
 
     @Override
-    public boolean check(Object performer) {
+    public boolean check(@NotNull Object performer) {
         return true;
     }
 }

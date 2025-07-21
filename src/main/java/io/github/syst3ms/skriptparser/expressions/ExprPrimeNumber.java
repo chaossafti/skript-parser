@@ -5,6 +5,7 @@ import io.github.syst3ms.skriptparser.lang.Expression;
 import io.github.syst3ms.skriptparser.lang.TriggerContext;
 import io.github.syst3ms.skriptparser.parsing.ParseContext;
 import io.github.syst3ms.skriptparser.util.math.NumberMath;
+import org.jetbrains.annotations.NotNull;
 
 import java.math.BigInteger;
 
@@ -32,13 +33,13 @@ public class ExprPrimeNumber implements Expression<Number> {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public boolean init(Expression<?>[] expressions, int matchedPattern, ParseContext parseContext) {
+	public boolean init(Expression<?> @NotNull [] expressions, int matchedPattern, @NotNull ParseContext parseContext) {
 		ordinal = (Expression<BigInteger>) expressions[0];
 		return true;
 	}
 
 	@Override
-	public Number[] getValues(TriggerContext ctx) {
+	public Number[] getValues(@NotNull TriggerContext ctx) {
 		return ordinal.getSingle(ctx)
 				.filter(n -> n.compareTo(BigInteger.ZERO) > 0)
 				.map(n -> {

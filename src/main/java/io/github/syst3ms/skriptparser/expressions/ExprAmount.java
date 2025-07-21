@@ -49,7 +49,7 @@ public class ExprAmount extends PropertyExpression<Number, Object> {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Number[] getValues(TriggerContext ctx) {
+	public Number[] getValues(@NotNull TriggerContext ctx) {
 		if (recursive) {
 			var var = ((Variable<?>) getOwner()).getRaw(ctx);
 			if (var.isPresent())
@@ -61,7 +61,7 @@ public class ExprAmount extends PropertyExpression<Number, Object> {
 	}
 
 	@Override
-	public String toString(TriggerContext ctx, boolean debug) {
+	public String toString(@NotNull TriggerContext ctx, boolean debug) {
 		return toString(ctx, debug, (recursive ? "recursive " : "") + "size");
 	}
 

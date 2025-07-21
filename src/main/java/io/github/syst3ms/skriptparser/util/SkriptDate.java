@@ -16,7 +16,7 @@ public class SkriptDate implements Comparable<SkriptDate> {
     public final static String DATE_FORMAT = "EEEE dd MMMM yyyy HH:mm:ss.SSS"; // Add 'zzzXXX' to display time zone as well
     public final static Locale DATE_LOCALE = Locale.US;
 
-    private static TimeZone defaultTimeZone = TimeZone.getDefault();
+    private static final TimeZone defaultTimeZone = TimeZone.getDefault();
 
     private long timestamp;
 

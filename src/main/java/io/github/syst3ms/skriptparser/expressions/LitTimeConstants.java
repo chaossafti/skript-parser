@@ -7,6 +7,7 @@ import io.github.syst3ms.skriptparser.lang.TriggerContext;
 import io.github.syst3ms.skriptparser.log.ErrorType;
 import io.github.syst3ms.skriptparser.parsing.ParseContext;
 import io.github.syst3ms.skriptparser.util.Time;
+import org.jetbrains.annotations.NotNull;
 
 import java.math.BigInteger;
 
@@ -37,7 +38,7 @@ public class LitTimeConstants implements Literal<Time> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public boolean init(Expression<?>[] expressions, int matchedPattern, ParseContext parseContext) {
+    public boolean init(Expression<?> @NotNull [] expressions, int matchedPattern, @NotNull ParseContext parseContext) {
         onClock = matchedPattern == 1;
         midnight = parseContext.getNumericMark() == 1;
         if (onClock) {

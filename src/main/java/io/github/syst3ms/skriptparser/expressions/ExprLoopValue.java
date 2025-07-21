@@ -12,6 +12,7 @@ import io.github.syst3ms.skriptparser.types.TypeManager;
 import io.github.syst3ms.skriptparser.types.conversions.Converters;
 import io.github.syst3ms.skriptparser.util.ClassUtils;
 import io.github.syst3ms.skriptparser.util.Pair;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Array;
@@ -49,7 +50,7 @@ public class ExprLoopValue extends SectionValue<SecLoop, Object> {
 	private int discriminant;
 
 	@Override
-	public boolean preInitialize(Expression<?>[] expressions, int matchedPattern, ParseContext parseContext) {
+	public boolean preInitialize(Expression<?> @NotNull [] expressions, int matchedPattern, @NotNull ParseContext parseContext) {
 		loopedString = parseContext.getMatches().get(0).group();
 		discriminant = -1;
 		final Matcher m = Pattern.compile("^(.+)-(\\d+)$").matcher(loopedString);
@@ -102,7 +103,7 @@ public class ExprLoopValue extends SectionValue<SecLoop, Object> {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <R> Optional<? extends Expression<R>> convertExpression(Class<R> to) {
+	public <R> Optional<? extends Expression<R>> convertExpression(@NotNull Class<R> to) {
 		if (isVariableLoop && !isIndex) {
 			return Optional.of(ConvertedExpression.newInstance(this, (Class<R>) ClassUtils.getCommonSuperclass(to), o -> Converters.convert(o, to)));
 		} else {
@@ -119,7 +120,7 @@ public class ExprLoopValue extends SectionValue<SecLoop, Object> {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Object[] getSectionValues(SecLoop loop, TriggerContext ctx) {
+	public Object[] getSectionValues(@NotNull SecLoop loop, @NotNull TriggerContext ctx) {
 		Object[] one = (Object[]) Array.newInstance(getReturnType(), 1);
 		if (isVariableLoop) {
 			if (loop.getArguments() == null || loop.getArguments()[0] == null) {

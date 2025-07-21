@@ -1,6 +1,5 @@
 package io.github.syst3ms.skriptparser.lang;
 
-import io.github.syst3ms.skriptparser.event.TriggerContext;
 import io.github.syst3ms.skriptparser.file.FileSection;
 import io.github.syst3ms.skriptparser.lang.event.SkriptEventManager;
 import io.github.syst3ms.skriptparser.lang.event.TriggerEventHandler;
@@ -81,12 +80,12 @@ public abstract class SkriptEvent implements SyntaxElement {
     }
 
     /**
-     * A list of the classes of every syntax that is allowed to be used inside of this SkriptEvent. The default behavior
+     * A list of classes of every syntax that is allowed to be used inside of this SkriptEvent. The default behavior
      * is to return an empty list, which equates to no restrictions. If overridden, this allows the creation of specialized,
      * DSL-like sections in which only select {@linkplain Statement statements} and other {@linkplain CodeSection sections}
      * (and potentially, but not necessarily, expressions).
      *
-     * @return a list of the classes of each syntax allowed inside this SkriptEvent
+     * @return a set of the classes of each syntax allowed inside this SkriptEvent
      * @see #isRestrictingExpressions()
      */
     protected Set<Class<? extends SyntaxElement>> getAllowedSyntaxes() {
@@ -103,55 +102,19 @@ public abstract class SkriptEvent implements SyntaxElement {
      */
     protected boolean isRestrictingExpressions() {
         return false;
-        }
-
-        /**
-         * For virtually all programming and scripting languages, the need exists to have functions in order to not repeat
-         * code too often. Skript is no exception, however, by default, every trigger is loaded in the order it appears in the file,
-         * This is undesirable if we don't want the restriction of having to declare functions before using them. This is especially
-         * counter-productive if we're dealing with multiple scripts.
-         *
-         * To solve this problem, {@link Trigger triggers} with with a higher loading priority number will be loaded first.
-         *
-         * @return the loading priority number. 0 by default
-         */
-        public int getLoadingPriority () {
-            return 0;
-        }
-
-        @Override
-        @OverridingMethodsMustInvokeSuper() ;
-        public void onUnload () {
-            // call onUnload on child syntaxes
-            if(eventHandler != null) {
-                eventHandler.getTrigger().onUnload();
-            }
-
-
-            // we have to unregister last because it sets eventHandler to null
-            unregister();
-        }
-
-        /**
-         * A list of the classes of every syntax that is allowed to be used inside of this SkriptEvent. The default behavior
-         * is to return an empty list, which equates to no restrictions. If overriden, this allows the creation of specialized,
-         * DSL-like sections in which only select {@linkplain Statement statements} and other {@linkplain CodeSection sections}
-         * (and potentially, but not necessarily, expressions).
-         * @return a list of the classes of each syntax allowed inside this SkriptEvent
-         * @see #isRestrictingExpressions()
-         */
-        protected Set<Class<? extends SyntaxElement>> getAllowedSyntaxes () {
-            return Collections.emptySet();
-        }
-
-        /**
-         * Whether the syntax restrictions outlined in {@link #getAllowedSyntaxes()} should also apply to expressions.
-         * This is usually undesirable, so it is false by default.
-         *
-         * This should return true <b>if and only if</b> {@link #getAllowedSyntaxes()} contains an {@linkplain Expression} class.
-         * @return whether the use of expressions is also restricted by {@link #getAllowedSyntaxes()}. False by default.
-         */
-        protected boolean isRestrictingExpressions () {
-            return false;
-        }
     }
+
+    @Override
+    @OverridingMethodsMustInvokeSuper
+    public void onUnload() {
+        // call onUnload on child syntaxes
+        if(eventHandler != null) {
+            eventHandler.getTrigger().onUnload();
+        }
+
+
+        // we have to unregister last because it sets eventHandler to null
+        unregister();
+    }
+
+}

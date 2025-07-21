@@ -8,6 +8,7 @@ import io.github.syst3ms.skriptparser.lang.TriggerContext;
 import io.github.syst3ms.skriptparser.lang.control.Finishing;
 import io.github.syst3ms.skriptparser.lang.control.SelfReferencing;
 import io.github.syst3ms.skriptparser.parsing.ParseContext;
+import org.jetbrains.annotations.NotNull;
 
 import java.math.BigInteger;
 import java.util.Optional;
@@ -34,18 +35,18 @@ public class EffEscape extends Effect {
 
     @SuppressWarnings("unchecked")
     @Override
-    public boolean init(Expression<?>[] expressions, int matchedPattern, ParseContext parseContext) {
+    public boolean init(Expression<?> @NotNull [] expressions, int matchedPattern, @NotNull ParseContext parseContext) {
         amount = (Expression<BigInteger>) expressions[0];
         return true;
     }
 
     @Override
-    public void execute(TriggerContext ctx) {
+    public void execute(@NotNull TriggerContext ctx) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public Optional<? extends Statement> walk(TriggerContext ctx) {
+    public Optional<? extends Statement> walk(@NotNull TriggerContext ctx) {
         if (amount.getSingle(ctx).isEmpty())
             return getNext();
         int am = amount.getSingle(ctx).get().intValue();

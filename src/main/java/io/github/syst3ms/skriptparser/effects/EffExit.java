@@ -13,6 +13,7 @@ import io.github.syst3ms.skriptparser.parsing.ParseContext;
 import io.github.syst3ms.skriptparser.sections.SecConditional;
 import io.github.syst3ms.skriptparser.sections.SecLoop;
 import io.github.syst3ms.skriptparser.sections.SecWhile;
+import org.jetbrains.annotations.NotNull;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -53,7 +54,7 @@ public class EffExit extends Effect {
 
     @SuppressWarnings("unchecked")
     @Override
-    public boolean init(Expression<?>[] expressions, int matchedPattern, ParseContext parseContext) {
+    public boolean init(Expression<?> @NotNull [] expressions, int matchedPattern, @NotNull ParseContext parseContext) {
         currentSections.addAll(parseContext.getParserState().getCurrentSections());
         pattern = matchedPattern;
         mark = parseContext.getNumericMark();
@@ -63,12 +64,12 @@ public class EffExit extends Effect {
     }
 
     @Override
-    protected void execute(TriggerContext ctx) {
+    protected void execute(@NotNull TriggerContext ctx) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public Optional<? extends Statement> walk(TriggerContext ctx) {
+    public Optional<? extends Statement> walk(@NotNull TriggerContext ctx) {
         switch (pattern) {
             case 0:
                 // We do this instead of returning an empty Optional,

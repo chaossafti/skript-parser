@@ -9,6 +9,7 @@ import io.github.syst3ms.skriptparser.types.comparisons.Comparators;
 import io.github.syst3ms.skriptparser.types.comparisons.Relation;
 import io.github.syst3ms.skriptparser.util.DoubleOptional;
 import io.github.syst3ms.skriptparser.util.math.NumberMath;
+import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -42,7 +43,7 @@ public class ExprRandomNumber implements Expression<Number> {
 
     @Override
     @SuppressWarnings("unchecked")
-    public boolean init(Expression<?>[] expressions, int matchedPattern, ParseContext context) {
+    public boolean init(Expression<?> @NotNull [] expressions, int matchedPattern, @NotNull ParseContext context) {
         lowerNumber = (Expression<Number>) expressions[0];
         maxNumber = (Expression<Number>) expressions[1];
         isInteger = matchedPattern == 0;
@@ -52,7 +53,7 @@ public class ExprRandomNumber implements Expression<Number> {
     }
 
     @Override
-    public Number[] getValues(TriggerContext ctx) {
+    public Number[] getValues(@NotNull TriggerContext ctx) {
         return DoubleOptional.ofOptional(lowerNumber.getSingle(ctx), maxNumber.getSingle(ctx))
                 .flatMap((l, m) -> DoubleOptional.of(
                         Relation.SMALLER_OR_EQUAL.is(numComp.apply(l, m)) ? l : m,

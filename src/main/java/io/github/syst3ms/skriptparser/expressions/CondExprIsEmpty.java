@@ -5,6 +5,7 @@ import io.github.syst3ms.skriptparser.lang.Expression;
 import io.github.syst3ms.skriptparser.lang.TriggerContext;
 import io.github.syst3ms.skriptparser.lang.base.ConditionalExpression;
 import io.github.syst3ms.skriptparser.parsing.ParseContext;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Check if a given string or list is empty.
@@ -32,7 +33,7 @@ public class CondExprIsEmpty extends ConditionalExpression {
     private boolean stringCheck;
 
     @Override
-    public boolean init(Expression<?>[] expressions, int matchedPattern, ParseContext parseContext) {
+    public boolean init(Expression<?> @NotNull [] expressions, int matchedPattern, @NotNull ParseContext parseContext) {
         expression = expressions[0];
         stringCheck = matchedPattern == 1;
         setNegated(parseContext.getNumericMark() == 1);
@@ -40,7 +41,7 @@ public class CondExprIsEmpty extends ConditionalExpression {
     }
 
     @Override
-    public boolean check(TriggerContext ctx) {
+    public boolean check(@NotNull TriggerContext ctx) {
         if (stringCheck) {
             return expression.check(ctx, val -> ((String) val).isBlank(), isNegated());
         } else {

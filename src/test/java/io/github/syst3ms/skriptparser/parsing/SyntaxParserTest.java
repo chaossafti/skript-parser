@@ -50,7 +50,7 @@ public class SyntaxParserTest {
                             var executor = Executors.newSingleThreadExecutor();
                             Future<List<LogEntry>> future;
 
-                            future = executor.submit(() -> ScriptLoader.loadScript(file.toPath(), true));
+                            future = executor.submit(() -> ScriptLoader.loadScript(file.toPath(), true).getLog().orElseThrow());
                             List<LogEntry> logs;
                             try {
                                 logs = future.get(TEST_TIMEOUT, TimeUnit.MILLISECONDS);

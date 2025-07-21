@@ -120,7 +120,7 @@ public class Variable<T> implements Expression<T> {
                 list.add(o);
             }
         }
-        return Optional.ofNullable(list.toArray());
+        return Optional.of(list.toArray());
     }
 
     @Override

@@ -12,6 +12,7 @@ import io.github.syst3ms.skriptparser.types.TypeManager;
 import io.github.syst3ms.skriptparser.types.changers.Arithmetic;
 import io.github.syst3ms.skriptparser.util.ClassUtils;
 import io.github.syst3ms.skriptparser.util.DoubleOptional;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
@@ -43,7 +44,7 @@ public class ExprDifference implements Expression<Object> {
     private Arithmetic arithmetic;
 
     @Override
-    public boolean init(Expression<?>[] expressions, int matchedPattern, ParseContext parseContext) {
+    public boolean init(Expression<?> @NotNull [] expressions, int matchedPattern, @NotNull ParseContext parseContext) {
         first = expressions[0];
         second = expressions[1];
         Optional<? extends Type<?>> type;
@@ -110,7 +111,7 @@ public class ExprDifference implements Expression<Object> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public Object[] getValues(TriggerContext ctx) {
+    public Object[] getValues(@NotNull TriggerContext ctx) {
         return DoubleOptional.ofOptional(first.getSingle(ctx), second.getSingle(ctx))
                 .mapToOptional((f, s) -> {
                     // The arithmetic field isn't initialized here.

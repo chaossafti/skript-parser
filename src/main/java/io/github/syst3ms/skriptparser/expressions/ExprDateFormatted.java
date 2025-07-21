@@ -6,6 +6,7 @@ import io.github.syst3ms.skriptparser.lang.TriggerContext;
 import io.github.syst3ms.skriptparser.parsing.ParseContext;
 import io.github.syst3ms.skriptparser.util.DoubleOptional;
 import io.github.syst3ms.skriptparser.util.SkriptDate;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Formats a date as a string using the given format.
@@ -33,14 +34,14 @@ public class ExprDateFormatted implements Expression<String> {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public boolean init(Expression<?>[] expressions, int matchedPattern, ParseContext parseContext) {
+	public boolean init(Expression<?> @NotNull [] expressions, int matchedPattern, @NotNull ParseContext parseContext) {
 		date = (Expression<SkriptDate>) expressions[0];
 		format = (Expression<String>) expressions[1];
 		return true;
 	}
 
 	@Override
-	public String[] getValues(TriggerContext ctx) {
+	public String[] getValues(@NotNull TriggerContext ctx) {
 		return DoubleOptional.ofOptional(date.getSingle(ctx), format.getSingle(ctx))
 				.mapToOptional((da, f) -> new String[] {da.toString(f)})
 				.orElse(new String[0]);

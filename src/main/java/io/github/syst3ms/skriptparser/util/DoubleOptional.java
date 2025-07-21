@@ -14,7 +14,7 @@ import java.util.function.Supplier;
 
 /**
  * A double-valued version of an {@link Optional}, containing very similar methods.
- *
+ * <p>
  * Note that the two values aren't really independent : either both are set, or both are empty.
  * @param <T1> the type of the first value
  * @param <T2> the type of the second value
@@ -203,7 +203,7 @@ public class DoubleOptional<T1, T2> {
      * If both values are present, returns a {@code DoubleOptional} describing the result
      * (as if by {@link #ofNullable(Object, Object)}) of applying each given mapping function
      * to its respective value, and otherwise returns an empty {@code DoubleOptional}.
-     *
+     * <p>
      * If either mapping function returns {@code null}, the result will be an empty {@code DoubleOptional}.
      *
      * @param firstMapper the mapping function to apply to the first value, if present
@@ -226,7 +226,7 @@ public class DoubleOptional<T1, T2> {
     /**
      * If both values are present, returns an {@link Optional} constructed from the result of the given mapping
      * function applied to both values, otherwise returns an empty {@link Optional}.
-     *
+     * <p>
      * If the mapping function returns {@code null}, an empty {@link Optional} is returned.
      *
      * @param mapper the mapping function taking both values as inputs
@@ -245,7 +245,7 @@ public class DoubleOptional<T1, T2> {
     /**
      * If both values are present, returns the result of applying the given {@code DoubleOptional}-returning
      * mapping function to both values, and otherwise returns an empty {@code DoubleOptional}.
-     *
+     * <p>
      * This is similar to {@link #map(Function, Function)}, but it doesn't wrap the result in an additional
      * {@code DoubleOptional}.
      *
@@ -269,7 +269,7 @@ public class DoubleOptional<T1, T2> {
     /**
      * If both values are present, returns the result of applying the given {@link Optional}-returning
      * mapping function to both values, and otherwise returns an empty {@link Optional}.
-     *
+     * <p>
      * This is similar to {@link #mapToOptional(BiFunction)}, but it doesn't wrap the result in an additional
      * {@link Optional}.
      *

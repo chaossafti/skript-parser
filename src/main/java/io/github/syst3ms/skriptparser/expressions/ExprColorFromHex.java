@@ -5,6 +5,7 @@ import io.github.syst3ms.skriptparser.lang.Expression;
 import io.github.syst3ms.skriptparser.lang.TriggerContext;
 import io.github.syst3ms.skriptparser.parsing.ParseContext;
 import io.github.syst3ms.skriptparser.util.color.Color;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A color specified by its hexadecimal value. One can use three types of hex values:
@@ -35,13 +36,13 @@ public class ExprColorFromHex implements Expression<Color> {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public boolean init(Expression<?>[] expressions, int matchedPattern, ParseContext parseContext) {
+	public boolean init(Expression<?> @NotNull [] expressions, int matchedPattern, @NotNull ParseContext parseContext) {
 		hex = (Expression<String>) expressions[0];
 		return true;
 	}
 
 	@Override
-	public Color[] getValues(TriggerContext ctx) {
+	public Color[] getValues(@NotNull TriggerContext ctx) {
 		return hex.getSingle(ctx)
 				.flatMap(val -> Color.ofHex(val.startsWith("#") ? val.substring(1) : val))
 				.map(val -> new Color[] {val})

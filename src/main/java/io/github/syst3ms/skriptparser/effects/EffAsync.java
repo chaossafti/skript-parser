@@ -7,6 +7,7 @@ import io.github.syst3ms.skriptparser.lang.TriggerContext;
 import io.github.syst3ms.skriptparser.parsing.ParseContext;
 import io.github.syst3ms.skriptparser.parsing.SyntaxParser;
 import io.github.syst3ms.skriptparser.util.ThreadUtils;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Runs this effect asynchronously.
@@ -32,7 +33,7 @@ public class EffAsync extends Effect {
     private Effect effect;
 
     @Override
-    public boolean init(Expression<?>[] expressions, int matchedPattern, ParseContext parseContext) {
+    public boolean init(Expression<?> @NotNull [] expressions, int matchedPattern, @NotNull ParseContext parseContext) {
         String expr = parseContext.getMatches().get(0).group();
         parseContext.getLogger().recurse();
         effect = SyntaxParser.parseEffect(expr, parseContext.getParserState(), parseContext.getLogger()).orElse(null);
@@ -41,7 +42,7 @@ public class EffAsync extends Effect {
     }
 
     @Override
-    public void execute(TriggerContext ctx) {
+    public void execute(@NotNull TriggerContext ctx) {
         ThreadUtils.runAsync(() -> effect.walk(ctx));
     }
 

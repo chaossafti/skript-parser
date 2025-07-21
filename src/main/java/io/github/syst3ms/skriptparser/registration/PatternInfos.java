@@ -38,7 +38,7 @@ public class PatternInfos<T> {
     }
 
     /**
-     * @return a list of all patterns
+     * @return an array of all patterns
      */
     public String[] getPatterns() {
         return patterns;

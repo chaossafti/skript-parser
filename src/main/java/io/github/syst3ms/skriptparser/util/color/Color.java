@@ -90,7 +90,7 @@ public class Color {
     public static Color of(long hex, boolean isAlpha) {
         int r, g, b, a;
         if (isAlpha) {
-            r = (int) ((hex & 0xFF000000) >> 24);
+            r = (int) ((hex & 0xFF000000L) >> 24);
             g = (int) ((hex & 0xFF0000) >> 16);
             b = (int) ((hex & 0xFF00) >> 8);
             a = (int) (hex & 0xFF);

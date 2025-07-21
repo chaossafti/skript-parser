@@ -6,6 +6,7 @@ import io.github.syst3ms.skriptparser.lang.Literal;
 import io.github.syst3ms.skriptparser.lang.TriggerContext;
 import io.github.syst3ms.skriptparser.parsing.ParseContext;
 import io.github.syst3ms.skriptparser.util.math.BigDecimalMath;
+import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
 
@@ -51,7 +52,7 @@ public class LitMathConstants implements Literal<Number> {
     private int pattern;
 
     @Override
-    public boolean init(Expression<?>[] expressions, int matchedPattern, ParseContext parseContext) {
+    public boolean init(Expression<?> @NotNull [] expressions, int matchedPattern, @NotNull ParseContext parseContext) {
         pattern = parseContext.getNumericMark();
         return true;
     }

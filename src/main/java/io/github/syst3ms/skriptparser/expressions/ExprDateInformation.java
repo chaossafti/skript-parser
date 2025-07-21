@@ -7,6 +7,7 @@ import io.github.syst3ms.skriptparser.parsing.ParseContext;
 import io.github.syst3ms.skriptparser.registration.PatternInfos;
 import io.github.syst3ms.skriptparser.util.SkriptDate;
 import io.github.syst3ms.skriptparser.util.Time;
+import org.jetbrains.annotations.NotNull;
 
 import java.math.BigInteger;
 import java.time.Duration;
@@ -58,7 +59,7 @@ public class ExprDateInformation implements Expression<Object> {
 	private int mark;
 
 	@Override
-	public boolean init(Expression<?>[] expressions, int matchedPattern, ParseContext parseContext) {
+	public boolean init(Expression<?> @NotNull [] expressions, int matchedPattern, @NotNull ParseContext parseContext) {
 		returnsNumber = matchedPattern == 0;
 		mark = parseContext.getNumericMark();
 
@@ -67,7 +68,7 @@ public class ExprDateInformation implements Expression<Object> {
 	}
 
 	@Override
-	public Object[] getValues(TriggerContext ctx) {
+	public Object[] getValues(@NotNull TriggerContext ctx) {
 		return value.getSingle(ctx)
 				.map(val -> {
 					if (returnsNumber) {

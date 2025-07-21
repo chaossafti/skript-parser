@@ -9,6 +9,7 @@ import io.github.syst3ms.skriptparser.parsing.ParseContext;
 import io.github.syst3ms.skriptparser.registration.PatternInfos;
 import io.github.syst3ms.skriptparser.util.DoubleOptional;
 import io.github.syst3ms.skriptparser.util.math.BigDecimalMath;
+import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -66,7 +67,7 @@ public class ExprArithmeticOperators implements Expression<Number> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public boolean init(Expression<?>[] exprs, int matchedPattern, ParseContext parseContext) {
+    public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull ParseContext parseContext) {
         first = (Expression<? extends Number>) exprs[0];
         second = (Expression<? extends Number>) exprs[1];
         op = PATTERNS.getInfo(matchedPattern);
@@ -85,7 +86,7 @@ public class ExprArithmeticOperators implements Expression<Number> {
     }
 
     @Override
-    public Number[] getValues(TriggerContext ctx) {
+    public Number[] getValues(@NotNull TriggerContext ctx) {
         return DoubleOptional.ofOptional(first.getSingle(ctx), second.getSingle(ctx))
                 .map(f -> (Number) f, s -> (Number) s)
                 .mapToOptional((f, s) -> new Number[]{op.calculate(f, s)})
@@ -97,7 +98,7 @@ public class ExprArithmeticOperators implements Expression<Number> {
         return first.toString(ctx, debug) + " " + op + " " + second.toString(ctx, debug);
     }
 
-    private enum Operator {
+    public enum Operator {
         PLUS('+') {
             @Override
             public Number calculate(Number left, Number right) {

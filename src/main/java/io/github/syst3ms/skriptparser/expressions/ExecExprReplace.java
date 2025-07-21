@@ -7,6 +7,7 @@ import io.github.syst3ms.skriptparser.lang.base.ExecutableExpression;
 import io.github.syst3ms.skriptparser.log.ErrorType;
 import io.github.syst3ms.skriptparser.parsing.ParseContext;
 import io.github.syst3ms.skriptparser.types.changers.ChangeMode;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -48,7 +49,7 @@ public class ExecExprReplace extends ExecutableExpression<String> {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public boolean init(Expression<?>[] expressions, int matchedPattern, ParseContext parseContext) {
+	public boolean init(Expression<?> @NotNull [] expressions, int matchedPattern, @NotNull ParseContext parseContext) {
 		type = parseContext.getNumericMark();
 		regex = parseContext.hasMark("regex");
 
@@ -70,7 +71,7 @@ public class ExecExprReplace extends ExecutableExpression<String> {
 	}
 
 	@Override
-	public String[] getValues(TriggerContext ctx, boolean isEffect) {
+	public String[] getValues(@NotNull TriggerContext ctx, boolean isEffect) {
 		String[] replacedValues = toReplace.getValues(ctx);
 		String[] matchedValues = toMatch.getValues(ctx);
 		String replacementValue = replacement.getSingle(ctx).orElse(null);

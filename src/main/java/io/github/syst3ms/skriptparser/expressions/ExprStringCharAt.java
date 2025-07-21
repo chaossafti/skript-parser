@@ -4,6 +4,7 @@ import io.github.syst3ms.skriptparser.Parser;
 import io.github.syst3ms.skriptparser.lang.Expression;
 import io.github.syst3ms.skriptparser.lang.TriggerContext;
 import io.github.syst3ms.skriptparser.parsing.ParseContext;
+import org.jetbrains.annotations.NotNull;
 
 import java.math.BigInteger;
 
@@ -30,14 +31,14 @@ public class ExprStringCharAt implements Expression<String> {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public boolean init(Expression<?>[] expressions, int matchedPattern, ParseContext parseContext) {
+	public boolean init(Expression<?> @NotNull [] expressions, int matchedPattern, @NotNull ParseContext parseContext) {
 		position = (Expression<BigInteger>) expressions[0];
 		value = (Expression<String>) expressions[1];
 		return true;
 	}
 
 	@Override
-	public String[] getValues(TriggerContext ctx) {
+	public String[] getValues(@NotNull TriggerContext ctx) {
 		return value.getSingle(ctx)
 				.map(val -> position.stream(ctx)
 						.filter(pos -> pos.signum() > 0 && pos.compareTo(BigInteger.valueOf(val.length())) <= 0)

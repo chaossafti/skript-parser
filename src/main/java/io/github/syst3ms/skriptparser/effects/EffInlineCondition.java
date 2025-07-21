@@ -5,6 +5,7 @@ import io.github.syst3ms.skriptparser.lang.Effect;
 import io.github.syst3ms.skriptparser.lang.Expression;
 import io.github.syst3ms.skriptparser.lang.TriggerContext;
 import io.github.syst3ms.skriptparser.parsing.ParseContext;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Runs the next line of this section if a condition is met.
@@ -29,19 +30,19 @@ public class EffInlineCondition extends Effect {
 
     @SuppressWarnings("unchecked")
     @Override
-    public boolean init(Expression<?>[] expressions, int matchedPattern, ParseContext parseContext) {
+    public boolean init(Expression<?> @NotNull [] expressions, int matchedPattern, @NotNull ParseContext parseContext) {
         condition = (Expression<Boolean>) expressions[0];
         return true;
     }
 
     @Override
-    protected void execute(TriggerContext ctx) {
+    protected void execute(@NotNull TriggerContext ctx) {
         throw new UnsupportedOperationException();
     }
 
     @SuppressWarnings("ConstantConditions")
     @Override
-    public boolean run(TriggerContext ctx) {
+    public boolean run(@NotNull TriggerContext ctx) {
         return condition.getSingle(ctx).filter(b -> b).isPresent();
     }
 

@@ -16,6 +16,7 @@ import io.github.syst3ms.skriptparser.types.comparisons.Comparators;
 import io.github.syst3ms.skriptparser.types.comparisons.Relation;
 import io.github.syst3ms.skriptparser.util.ClassUtils;
 import io.github.syst3ms.skriptparser.util.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
@@ -74,7 +75,7 @@ public class CondExprCompare extends ConditionalExpression {
 
     @SuppressWarnings("null")
     @Override
-    public boolean init(Expression<?>[] expressions, int matchedPattern, ParseContext result) {
+    public boolean init(Expression<?> @NotNull [] expressions, int matchedPattern, @NotNull ParseContext result) {
         first = expressions[0];
         second = expressions[1];
         if (expressions.length == 3)
@@ -254,7 +255,7 @@ public class CondExprCompare extends ConditionalExpression {
      * neither a nor b # x or y === a !# x or y && b !# x or y			// nor = and
      */
     @Override
-    public boolean check(TriggerContext ctx) {
+    public boolean check(@NotNull TriggerContext ctx) {
         Object[] firstValues = first.getArray(ctx);
         Object[] secondValues = second.getArray(ctx);
         Object[] thirdValues = third != null ? third.getArray(ctx) : null;

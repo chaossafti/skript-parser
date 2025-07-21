@@ -7,6 +7,7 @@ import io.github.syst3ms.skriptparser.lang.TriggerContext;
 import io.github.syst3ms.skriptparser.log.SkriptLogger;
 import io.github.syst3ms.skriptparser.parsing.ParseContext;
 import io.github.syst3ms.skriptparser.util.FileUtils;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * The name of the current executed script, without the extension.
@@ -31,14 +32,14 @@ public class LitScriptName implements Literal<String> {
     private SkriptLogger logger;
 
     @Override
-    public boolean init(Expression<?>[] expressions, int matchedPattern, ParseContext parseContext) {
+    public boolean init(Expression<?> @NotNull [] expressions, int matchedPattern, @NotNull ParseContext parseContext) {
         logger = parseContext.getLogger();
         return true;
     }
 
     @Override
     public String[] getValues() {
-        return new String[] {FileUtils.removeExtension(logger.getFileName())};
+        return new String[] {logger.getScript().getName()};
     }
 
     @Override

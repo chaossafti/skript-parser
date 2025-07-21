@@ -8,6 +8,7 @@ import io.github.syst3ms.skriptparser.log.ErrorType;
 import io.github.syst3ms.skriptparser.parsing.ParseContext;
 import io.github.syst3ms.skriptparser.types.changers.ChangeMode;
 import io.github.syst3ms.skriptparser.util.CollectionUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -63,7 +64,7 @@ public class ExecExprListOperators extends ExecutableExpression<Object> {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public boolean init(Expression<?>[] expressions, int matchedPattern, ParseContext parseContext) {
+	public boolean init(Expression<?> @NotNull [] expressions, int matchedPattern, @NotNull ParseContext parseContext) {
 		switch (matchedPattern) {
 			case 0:
 				type = parseContext.getNumericMark();
@@ -120,7 +121,7 @@ public class ExecExprListOperators extends ExecutableExpression<Object> {
 	}
 
 	@Override
-	public Object[] getValues(TriggerContext ctx, boolean isEffect) {
+	public Object[] getValues(@NotNull TriggerContext ctx, boolean isEffect) {
 		var values = list.getValues(ctx);
 		if (values.length == 0)
 			return new Object[0];

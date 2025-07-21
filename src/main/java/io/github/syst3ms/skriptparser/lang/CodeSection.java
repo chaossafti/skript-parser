@@ -1,6 +1,5 @@
 package io.github.syst3ms.skriptparser.lang;
 
-import io.github.syst3ms.skriptparser.effects.EffReturn;
 import io.github.syst3ms.skriptparser.file.FileSection;
 import io.github.syst3ms.skriptparser.lang.base.ConditionalExpression;
 import io.github.syst3ms.skriptparser.log.ErrorType;
@@ -10,6 +9,7 @@ import io.github.syst3ms.skriptparser.parsing.ScriptLoader;
 import io.github.syst3ms.skriptparser.sections.SecConditional;
 import io.github.syst3ms.skriptparser.sections.SecLoop;
 import io.github.syst3ms.skriptparser.sections.SecWhile;
+import io.github.syst3ms.skriptparser.effects.EffReturn;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 
@@ -102,11 +102,11 @@ public abstract class CodeSection extends Statement {
     }
 
     /**
-     * A list of the classes of every syntax that is allowed to be used inside of this CodeSection. The default behavior
+     * A set of classes of every syntax that is allowed to be used inside this CodeSection. The default behavior
      * is to return an empty list, which equates to no restrictions. If overridden, this allows the creation of specialized,
      * DSL-like sections in which only select {@linkplain Statement statements} and other {@linkplain CodeSection sections}
      * (and potentially, but not necessarily, expressions).
-     * @return a list of the classes of each syntax allowed inside this CodeSection
+     * @return a set of the classes of each syntax allowed inside this CodeSection
      * @see #isRestrictingExpressions()
      */
     protected Set<Class<? extends SyntaxElement>> getAllowedSyntaxes() {
@@ -116,7 +116,7 @@ public abstract class CodeSection extends Statement {
     /**
      * Whether the syntax restrictions outlined in {@link #getAllowedSyntaxes()} should also apply to expressions.
      * This is usually undesirable, so it is false by default.
-     *
+     * <p>
      * This should return true <b>if and only if</b> {@link #getAllowedSyntaxes()} contains an {@linkplain Expression} class.
      * @return whether the use of expressions is also restricted by {@link #getAllowedSyntaxes()}. False by default.
      */

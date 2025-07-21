@@ -4,6 +4,7 @@ import io.github.syst3ms.skriptparser.Parser;
 import io.github.syst3ms.skriptparser.lang.Expression;
 import io.github.syst3ms.skriptparser.lang.TriggerContext;
 import io.github.syst3ms.skriptparser.parsing.ParseContext;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Returns a value depending of a boolean.
@@ -30,7 +31,7 @@ public class ExprTernary implements Expression<Object> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public boolean init(Expression<?>[] expressions, int matchedPattern, ParseContext parseContext) {
+    public boolean init(Expression<?> @NotNull [] expressions, int matchedPattern, @NotNull ParseContext parseContext) {
         valueToCheck = (Expression<Boolean>) expressions[matchedPattern == 0 ? 1 : 0];
         firstValue = (Expression<Object>) expressions[matchedPattern == 0 ? 0 : 1];
         secondValue = (Expression<Object>) expressions[2];
@@ -38,7 +39,7 @@ public class ExprTernary implements Expression<Object> {
     }
 
     @Override
-    public Object[] getValues(TriggerContext ctx) {
+    public Object[] getValues(@NotNull TriggerContext ctx) {
         return valueToCheck.getSingle(ctx)
                 .map(check -> check ? firstValue.getValues(ctx) : secondValue.getValues(ctx))
                 .orElse(new Object[0]);

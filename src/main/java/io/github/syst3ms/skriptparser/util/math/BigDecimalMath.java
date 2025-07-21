@@ -11,7 +11,7 @@ import static java.math.BigDecimal.*;
 /**
  * Provides advanced functions operating on {@link BigDecimal}s.
  * Taken from <a href="github.com/eobermuhlner/big-math/blob/master/ch.obermuhlner.math.big/src/main/java/ch/obermuhlner/math/big/BigDecimalMath.java">@obermuhlner's Github</a>
- *
+ * <p>
  * I do not claim ownership of this code, it is the intellectual property of <a href="github.com/eobermuhlner">@obermuhlner</a>.
  * @author @obermuhlner
  */
@@ -784,7 +784,7 @@ public class BigDecimalMath {
         long iterationCount = (mc.getPrecision() + 13) / 14;
         for (long k = 1; k <= iterationCount; k++) {
             var valueK = BigDecimal.valueOf(k);
-            dividendTerm1 += -6;
+            dividendTerm1 -= 6;
             dividendTerm2 += 2;
             dividendTerm3 += 6;
             var dividend = BigDecimal.valueOf(dividendTerm1).multiply(BigDecimal.valueOf(dividendTerm2))

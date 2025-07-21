@@ -85,18 +85,18 @@ public class EffAssert extends Effect {
 	private String errorString(TriggerContext ctx) {
 		if (this.message == null) {
 			if (pattern == 0) {
-				return "Assertion failed ('" + condition.toString(ctx, logger.isDebug()) + "', " + logger.getFileName() + ")";
+				return "Assertion failed ('" + condition.toString(ctx, logger.isDebug()) + "', " + logger.getScript() + ")";
 			} else {
 				if (shouldThrow) {
 					assert compiled;
-					return "Expected a non-parsable expression (" + matched + ", " + logger.getFileName() + ")";
+					return "Expected a non-parsable expression (" + matched + ", " + logger.getScript() + ")";
 				} else {
 					assert !compiled;
-					return "Expected a parsable expression (" + matched + ", " + logger.getFileName() + ")";
+					return "Expected a parsable expression (" + matched + ", " + logger.getScript() + ")";
 				}
 			}
 		} else {
-			return message.getSingle(ctx).map(String::new).orElse("No message provided") + " (" + logger.getFileName() + ")";
+			return message.getSingle(ctx).map(String::new).orElse("No message provided") + " (" + logger.getScript() + ")";
 		}
 	}
 }

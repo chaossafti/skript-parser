@@ -5,6 +5,7 @@ import io.github.syst3ms.skriptparser.lang.Expression;
 import io.github.syst3ms.skriptparser.lang.TriggerContext;
 import io.github.syst3ms.skriptparser.parsing.ParseContext;
 import io.github.syst3ms.skriptparser.util.color.Color;
+import org.jetbrains.annotations.NotNull;
 
 import java.math.BigInteger;
 
@@ -35,13 +36,13 @@ public class ExprColorFromRGB implements Expression<Color> {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public boolean init(Expression<?>[] expressions, int matchedPattern, ParseContext parseContext) {
+	public boolean init(Expression<?> @NotNull [] expressions, int matchedPattern, @NotNull ParseContext parseContext) {
 		rgb = (Expression<BigInteger>) expressions[0];
 		return true;
 	}
 
 	@Override
-	public Color[] getValues(TriggerContext ctx) {
+	public Color[] getValues(@NotNull TriggerContext ctx) {
 		var values = rgb.stream(ctx).map(BigInteger::intValue).toArray(Integer[]::new);
 		if (values.length == 3) {
 			return Color.of(values[0], values[1], values[2])

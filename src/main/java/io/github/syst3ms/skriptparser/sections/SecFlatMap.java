@@ -92,7 +92,7 @@ public class SecFlatMap extends ReturnSection<Object> implements SelfReferencing
 			);
 			return start();
 		} else {
-			if (result.size() == 0) {
+			if (result.isEmpty()) {
 				flatMapped.change(ctx, ChangeMode.DELETE, new Object[0]);
 			} else {
 				flatMapped.change(ctx, ChangeMode.SET, result.toArray());

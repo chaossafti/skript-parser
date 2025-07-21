@@ -1,6 +1,7 @@
 package io.github.syst3ms.skriptparser.util;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Random;
 import java.util.function.Predicate;
 
@@ -30,7 +31,7 @@ public class CollectionUtils {
 
     @SafeVarargs
     public static <T> boolean contains(T[] array, T... contained) {
-        return Arrays.asList(array).containsAll(Arrays.asList(contained));
+        return new HashSet<>(Arrays.asList(array)).containsAll(Arrays.asList(contained));
     }
 
     /**
@@ -46,8 +47,6 @@ public class CollectionUtils {
         int index = 0;
         int findTimes = 0;
         if (n == 0)
-            return -1;
-        if (array.length == 0)
             return -1;
         for (T o : array) {
             if (condition.test(o))

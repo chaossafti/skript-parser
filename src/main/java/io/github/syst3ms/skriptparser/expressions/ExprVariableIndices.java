@@ -6,6 +6,7 @@ import io.github.syst3ms.skriptparser.lang.TriggerContext;
 import io.github.syst3ms.skriptparser.lang.Variable;
 import io.github.syst3ms.skriptparser.log.ErrorType;
 import io.github.syst3ms.skriptparser.parsing.ParseContext;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
@@ -32,7 +33,7 @@ public class ExprVariableIndices implements Expression<String> {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public boolean init(Expression<?>[] expressions, int matchedPattern, ParseContext parseContext) {
+	public boolean init(Expression<?> @NotNull [] expressions, int matchedPattern, @NotNull ParseContext parseContext) {
 		value = (Variable<Object>) expressions[0];
 		if (value.isSingle()) {
 			var logger = parseContext.getLogger();
@@ -47,7 +48,7 @@ public class ExprVariableIndices implements Expression<String> {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public String[] getValues(TriggerContext ctx) {
+	public String[] getValues(@NotNull TriggerContext ctx) {
 		return value.getRaw(ctx)
 				.map(val -> ((Map<String, Object>) val).keySet().toArray(new String[0]))
 				.orElse(new String[0]);

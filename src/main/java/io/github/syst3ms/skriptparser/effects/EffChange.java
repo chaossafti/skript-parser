@@ -9,6 +9,7 @@ import io.github.syst3ms.skriptparser.parsing.ParseContext;
 import io.github.syst3ms.skriptparser.registration.PatternInfos;
 import io.github.syst3ms.skriptparser.types.TypeManager;
 import io.github.syst3ms.skriptparser.types.changers.ChangeMode;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -50,7 +51,7 @@ public class EffChange extends Effect {
     private ChangeMode mode;
 
     @Override
-    public boolean init(Expression<?>[] expressions, int matchedPattern, ParseContext parseContext) {
+    public boolean init(Expression<?> @NotNull [] expressions, int matchedPattern, @NotNull ParseContext parseContext) {
         ChangeMode mode = PATTERNS.getInfo(matchedPattern);
         if (mode == ChangeMode.RESET || mode == ChangeMode.DELETE) {
             changed = expressions[0];
@@ -113,7 +114,7 @@ public class EffChange extends Effect {
     }
 
     @Override
-    public void execute(TriggerContext ctx) {
+    public void execute(@NotNull TriggerContext ctx) {
         if (changeWith == null) {
             changed.change(ctx, mode, new Object[0]);
         } else {

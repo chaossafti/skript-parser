@@ -9,6 +9,7 @@ import io.github.syst3ms.skriptparser.lang.TriggerContext;
 import io.github.syst3ms.skriptparser.parsing.ParseContext;
 import io.github.syst3ms.skriptparser.util.DurationUtils;
 import io.github.syst3ms.skriptparser.util.ThreadUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
 import java.util.Optional;
@@ -45,7 +46,7 @@ public class EffWait extends Effect {
 
     @SuppressWarnings("unchecked")
     @Override
-    public boolean init(Expression<?>[] expressions, int matchedPattern, ParseContext parseContext) {
+    public boolean init(Expression<?> @NotNull [] expressions, int matchedPattern, @NotNull ParseContext parseContext) {
         isConditional = matchedPattern == 1;
         if (isConditional) {
             condition = (Expression<Boolean>) expressions[0];
@@ -59,13 +60,13 @@ public class EffWait extends Effect {
     }
 
     @Override
-    protected void execute(TriggerContext ctx) {
+    protected void execute(@NotNull TriggerContext ctx) {
         throw new UnsupportedOperationException();
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public Optional<? extends Statement> walk(TriggerContext ctx) {
+    public Optional<? extends Statement> walk(@NotNull TriggerContext ctx) {
         if (getNext().isEmpty())
             return Optional.empty();
 

@@ -41,7 +41,7 @@ public class LiteralLoader<T> extends OptionLoader {
 			boolean successful = true;
 
 			var list = config.getStringList(key);
-			if (!list.isPresent()) {
+			if (list.isEmpty()) {
 				logger.error("List at key '" + key + "' does not exist.", ErrorType.SEMANTIC_ERROR);
 				return false;
 			}
@@ -60,7 +60,7 @@ public class LiteralLoader<T> extends OptionLoader {
 			return successful;
 		} else {
 			var value = config.getString(key);
-			if (!value.isPresent()) {
+			if (value.isEmpty()) {
 				logger.error("Key '" + key + "' does not exist.", ErrorType.SEMANTIC_ERROR);
 				return false;
 			}

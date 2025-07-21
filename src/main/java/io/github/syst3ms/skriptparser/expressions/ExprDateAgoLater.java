@@ -6,6 +6,7 @@ import io.github.syst3ms.skriptparser.lang.TriggerContext;
 import io.github.syst3ms.skriptparser.parsing.ParseContext;
 import io.github.syst3ms.skriptparser.util.DoubleOptional;
 import io.github.syst3ms.skriptparser.util.SkriptDate;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
@@ -39,7 +40,7 @@ public class ExprDateAgoLater implements Expression<SkriptDate> {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public boolean init(Expression<?>[] expressions, int matchedPattern, ParseContext parseContext) {
+	public boolean init(Expression<?> @NotNull [] expressions, int matchedPattern, @NotNull ParseContext parseContext) {
 		past = matchedPattern == 0;
 		duration = (Expression<Duration>) expressions[0];
 		if (expressions.length == 2)
@@ -48,7 +49,7 @@ public class ExprDateAgoLater implements Expression<SkriptDate> {
 	}
 
 	@Override
-	public SkriptDate[] getValues(TriggerContext ctx) {
+	public SkriptDate[] getValues(@NotNull TriggerContext ctx) {
 		var actualDate = date != null ? date.getSingle(ctx) : Optional.of(SkriptDate.now());
 		return DoubleOptional.ofOptional(actualDate, duration.getSingle(ctx))
 				.mapToOptional((da, du) -> new SkriptDate[] {past ? da.minus(du) : da.plus(du)})

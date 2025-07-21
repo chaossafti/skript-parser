@@ -5,6 +5,7 @@ import io.github.syst3ms.skriptparser.lang.Expression;
 import io.github.syst3ms.skriptparser.lang.TriggerContext;
 import io.github.syst3ms.skriptparser.parsing.ParseContext;
 import io.github.syst3ms.skriptparser.util.DoubleOptional;
+import org.jetbrains.annotations.NotNull;
 
 import java.math.BigInteger;
 
@@ -34,7 +35,7 @@ public class ExprStringOccurrence implements Expression<Number> {
 	// TODO let this support nth occurrence
 	@SuppressWarnings("unchecked")
 	@Override
-	public boolean init(Expression<?>[] expressions, int matchedPattern, ParseContext parseContext) {
+	public boolean init(Expression<?> @NotNull [] expressions, int matchedPattern, @NotNull ParseContext parseContext) {
 		first = parseContext.getNumericMark() == 0;
 		needle = (Expression<String>) expressions[0];
 		haystack = (Expression<String>) expressions[1];
@@ -42,7 +43,7 @@ public class ExprStringOccurrence implements Expression<Number> {
 	}
 
 	@Override
-	public Number[] getValues(TriggerContext ctx) {
+	public Number[] getValues(@NotNull TriggerContext ctx) {
 		return DoubleOptional.ofOptional(haystack.getSingle(ctx), needle.getSingle(ctx))
 				.mapToOptional((h, n) -> first ? h.indexOf(n) : h.lastIndexOf(n))
 				.filter(i -> i != -1)

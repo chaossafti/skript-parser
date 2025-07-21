@@ -7,6 +7,7 @@ import io.github.syst3ms.skriptparser.lang.TriggerContext;
 import io.github.syst3ms.skriptparser.log.ErrorType;
 import io.github.syst3ms.skriptparser.parsing.ParseContext;
 import io.github.syst3ms.skriptparser.parsing.SyntaxParser;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Runs this effect if a given condition succeeds.
@@ -31,7 +32,7 @@ public class EffDoIf extends Effect {
 
     @SuppressWarnings("unchecked")
     @Override
-    public boolean init(Expression<?>[] expressions, int matchedPattern, ParseContext parseContext) {
+    public boolean init(Expression<?> @NotNull [] expressions, int matchedPattern, @NotNull ParseContext parseContext) {
         condition = (Expression<Boolean>) expressions[0];
         String expr = parseContext.getMatches().get(0).group();
         parseContext.getLogger().recurse();
@@ -49,7 +50,7 @@ public class EffDoIf extends Effect {
 
     @SuppressWarnings("ConstantConditions")
     @Override
-    public void execute(TriggerContext ctx) {
+    public void execute(@NotNull TriggerContext ctx) {
         if (condition.getSingle(ctx).filter(b -> b).isPresent())
             effect.walk(ctx);
     }

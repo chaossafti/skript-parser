@@ -5,6 +5,7 @@ import io.github.syst3ms.skriptparser.lang.Expression;
 import io.github.syst3ms.skriptparser.lang.TriggerContext;
 import io.github.syst3ms.skriptparser.lang.base.ConditionalExpression;
 import io.github.syst3ms.skriptparser.parsing.ParseContext;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.regex.Pattern;
 
@@ -33,7 +34,7 @@ public class CondExprMatch extends ConditionalExpression {
 
     @SuppressWarnings("unchecked")
     @Override
-    public boolean init(Expression<?>[] expressions, int matchedPattern, ParseContext parseContext) {
+    public boolean init(Expression<?> @NotNull [] expressions, int matchedPattern, @NotNull ParseContext parseContext) {
         matched = (Expression<String>) expressions[0];
         pattern = (Expression<String>) expressions[1];
         // 1 = negated, 2 = partially, 3 = negated and partially
@@ -43,7 +44,7 @@ public class CondExprMatch extends ConditionalExpression {
     }
 
     @Override
-    public boolean check(TriggerContext ctx) {
+    public boolean check(@NotNull TriggerContext ctx) {
         return matched.check(
                 ctx,
                 toMatch -> pattern.check(
