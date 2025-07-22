@@ -1,5 +1,7 @@
 package io.github.syst3ms.skriptparser.log;
 
+import io.github.syst3ms.skriptparser.registration.SyntaxInfo;
+
 /**
  * A type describing an error, mainly used to indicate priority in errors.
  */
@@ -24,5 +26,9 @@ public enum ErrorType {
     /**
      * No match was found for the given input.
      */
-    NO_MATCH
+    NO_MATCH,
+    /**
+     * Parsing the syntax was disallowed by an init validator registered at {@link SyntaxInfo#INIT_VALIDATORS}.
+     */
+    PARSING_DISALLOWED;
 }

@@ -350,7 +350,15 @@ public class SyntaxParser {
             logger.setContext(ErrorContext.MATCHING);
             var parser = new MatchContext(element, parserState, logger);
             if (element.match(s, 0, parser) == s.length()) {
-                var expression = (Expression<? extends T>) info.createInstance();
+                Expression<? extends T> expression;
+
+                try {
+                    expression = (Expression<? extends T>) info.createInstance();
+                } catch (ParsingDisallowedException e) {
+                    logger.error(e.getMessage(), ErrorType.PARSING_DISALLOWED, "Parsing was disallowed for: " + e.getSyntaxInfo().getSyntaxClass().getSimpleName());
+                    return Optional.empty();
+                }
+
                 logger.setContext(ErrorContext.INITIALIZATION);
                 if (!expression.init(
                         parser.getParsedExpressions().toArray(new Expression[0]),
@@ -580,7 +588,15 @@ public class SyntaxParser {
             logger.setContext(ErrorContext.MATCHING);
             var parser = new MatchContext(element, parserState, logger);
             if (element.match(s, 0, parser) == s.length()) {
-                var eff = info.createInstance();
+                Effect eff;
+
+                try {
+                    eff = info.createInstance();
+                } catch (ParsingDisallowedException e) {
+                    logger.error(e.getMessage(), ErrorType.PARSING_DISALLOWED, "Parsing was disallowed for: " + e.getSyntaxInfo().getSyntaxClass().getSimpleName());
+                    return Optional.empty();
+                }
+
                 logger.setContext(ErrorContext.INITIALIZATION);
                 if (!eff.init(
                         parser.getParsedExpressions().toArray(new Expression[0]),
@@ -635,7 +651,13 @@ public class SyntaxParser {
             logger.setContext(ErrorContext.MATCHING);
             var parser = new MatchContext(element, parserState, logger);
             if (element.match(section.getLineContent(), 0, parser) != -1) {
-                var sec = info.createInstance();
+                CodeSection sec;
+                try {
+                    sec = info.createInstance();
+                } catch (ParsingDisallowedException e) {
+                    logger.error(e.getMessage(), ErrorType.PARSING_DISALLOWED, "Parsing was disallowed for: " + info.getSyntaxClass().getSimpleName());
+                    return Optional.empty();
+                }
                 logger.setContext(ErrorContext.INITIALIZATION);
                 if (!sec.init(
                         parser.getParsedExpressions().toArray(Expression[]::new),
@@ -686,7 +708,14 @@ public class SyntaxParser {
             logger.setContext(ErrorContext.MATCHING);
             var parser = new MatchContext(element, parserState, logger);
             if (element.match(section.getLineContent(), 0, parser) != -1) {
-                var event = info.createInstance();
+                SkriptEvent event;
+                try {
+                    event = info.createInstance();
+                } catch (ParsingDisallowedException e) {
+                    logger.error(e.getMessage(), ErrorType.PARSING_DISALLOWED, "Parsing was disallowed for: " + info.getSyntaxClass().getSimpleName());
+                    return Optional.empty();
+                }
+
                 logger.setContext(ErrorContext.INITIALIZATION);
                 if (!event.init(
                         parser.getParsedExpressions().toArray(new Expression[0]),

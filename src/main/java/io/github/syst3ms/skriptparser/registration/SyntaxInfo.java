@@ -3,13 +3,13 @@ package io.github.syst3ms.skriptparser.registration;
 import io.github.syst3ms.skriptparser.lang.Expression;
 import io.github.syst3ms.skriptparser.lang.SkriptEvent;
 import io.github.syst3ms.skriptparser.lang.SyntaxElement;
+import io.github.syst3ms.skriptparser.parsing.ParsingDisallowedException;
 import io.github.syst3ms.skriptparser.pattern.PatternElement;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
@@ -17,6 +17,13 @@ import java.util.function.Supplier;
  * @param <C> the {@link SyntaxElement} class
  */
 public class SyntaxInfo<C> {
+    /**
+     * Every consumer will be run with a SyntaxInfo whenever {@link #createInstance()} is run.
+     * Throwing an {@link ParsingDisallowedException} will stop the new instance from being created.
+     * @see ParsingDisallowedException
+     */
+    public static Set<Consumer<SyntaxInfo<?>>> INIT_VALIDATORS = new HashSet<>();
+
     private final Class<C> c;
     private final List<PatternElement> patterns;
     private final int priority;
@@ -62,7 +69,9 @@ public class SyntaxInfo<C> {
         return supplier;
     }
 
-    public C createInstance() {
+    public C createInstance() throws ParsingDisallowedException {
+        INIT_VALIDATORS.forEach(consumer -> consumer.accept(this));
+
         if(supplier != null) {
             return supplier.get();
         }

@@ -80,7 +80,6 @@ public abstract class Statement implements SyntaxElement {
             return Optional.empty();
         }
     }
-
     /**
      * Runs all code starting at a given point sequentially
      * @param start the Statement the method should first run
