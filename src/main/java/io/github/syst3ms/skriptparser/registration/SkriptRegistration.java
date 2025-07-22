@@ -607,16 +607,16 @@ public class SkriptRegistration {
      * @param <C> the represented class
      */
     public class TypeRegistrar<C> implements Registrar {
-        private final Class<C> c;
-        private final String baseName;
-        private final String pattern;
-        private Function<? super C, String> toStringFunction = null;
+        protected final Class<C> c;
+        protected final String baseName;
+        protected final String pattern;
+        protected Function<? super C, String> toStringFunction = null;
         @Nullable
-        private Function<String, ? extends C> literalParser;
+        protected Function<String, ? extends C> literalParser;
         @Nullable
-        private Changer<? super C> defaultChanger;
+        protected Changer<? super C> defaultChanger;
         @Nullable
-        private Arithmetic<C, ?> arithmetic;
+        protected Arithmetic<C, ?> arithmetic;
 
         public TypeRegistrar(Class<C> c, String baseName, String pattern) {
             this.c = c;
@@ -735,8 +735,8 @@ public class SkriptRegistration {
     }
 
     public class ExpressionRegistrar<C extends Expression<? extends T>, T> extends SyntaxRegistrar<C> {
-        private final Class<T> returnType;
-        private final boolean isSingle;
+        protected final Class<T> returnType;
+        protected final boolean isSingle;
 
         ExpressionRegistrar(Class<C> c, Class<T> returnType, boolean isSingle, String... patterns) {
             super(c, patterns);
@@ -789,7 +789,7 @@ public class SkriptRegistration {
     }
 
     public class EventRegistrar<T extends SkriptEvent> extends SyntaxRegistrar<T> {
-        private Set<Class<? extends TriggerContext>> handledContexts = new HashSet<>();
+        protected Set<Class<? extends TriggerContext>> handledContexts = new HashSet<>();
 
         EventRegistrar(Class<T> c, String... patterns) {
             super(c, patterns);
@@ -826,17 +826,17 @@ public class SkriptRegistration {
     }
 
     public class ContextValueRegistrar<C extends TriggerContext, T> implements Registrar {
-        private final Class<C> context;
-        private final Class<T> returnType;
-        private final boolean isSingle;
-        private final String pattern;
+        protected final Class<C> context;
+        protected final Class<T> returnType;
+        protected final boolean isSingle;
+        protected final String pattern;
 
-        private final Function<C, T[]> function;
-        private State state = State.PRESENT;
-        private Usage usage = Usage.EXPRESSION_ONLY;
+        protected final Function<C, T[]> function;
+        protected State state = State.PRESENT;
+        protected Usage usage = Usage.EXPRESSION_ONLY;
 
         @SuppressWarnings("unchecked")
-        private Class<? extends C>[] excluded = new Class[0];
+        protected Class<? extends C>[] excluded = new Class[0];
 
         public ContextValueRegistrar(Class<C> context, Class<T> returnType, boolean isSingle, String pattern, Function<C, T[]> function) {
             this.context = context;
