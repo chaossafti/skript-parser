@@ -706,8 +706,9 @@ public class SkriptRegistration {
             return this;
         }
 
-        public void setSupplier(@NotNull Supplier<C> supplier) {
+        public SyntaxRegistrar<C> setSupplier(@NotNull Supplier<C> supplier) {
             this.supplier = supplier;
+            return this;
         }
 
         public SyntaxRegistrar<C> addData(String identifier, Object data) {

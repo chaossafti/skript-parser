@@ -6,6 +6,7 @@ import io.github.syst3ms.skriptparser.lang.SyntaxElement;
 import io.github.syst3ms.skriptparser.pattern.PatternElement;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -68,9 +69,10 @@ public class SyntaxInfo<C> {
 
         // use reflection to create an instance
         try {
-            //noinspection deprecation
-            return c.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
+            return c.getDeclaredConstructor()
+                    .newInstance();
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            System.err.println("Could not create instance of: " + c);
             throw new RuntimeException(e);
         }
     }
