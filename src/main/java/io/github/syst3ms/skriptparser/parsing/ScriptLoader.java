@@ -156,6 +156,7 @@ public class ScriptLoader {
 
             // gets the trigger, the object holding the code of the structure
             Trigger loaded = unloaded.getTrigger();
+            unloaded.getParserState().setCurrentEvent(loaded.getEvent());
             loaded.loadSection(unloaded.getSection(), unloaded.getParserState(), logger);
 
             // Why does the addon handle trigger handling???
