@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
  * Skript code.
  */
 public class SkriptLogger {
-    public static final String LOG_FORMAT = "%s (line %d: \"%s\", %s)";
     /*
      * In decreasing order of priority :
      * ErrorContext.RESTRICTED_SYNTAXES
@@ -145,19 +144,7 @@ public class SkriptLogger {
     private void log(String message, LogType type, @Nullable ErrorType error, @Nullable String tip) {
         if (open) {
             List<ErrorContext> ctx = new ArrayList<>(errorContext);
-            if (line == -1) {
-                logEntries.add(new LogEntry(message, type, line, ctx, error, script, tip));
-            } else {
-                logEntries.add(new LogEntry(
-                        String.format(
-                                LOG_FORMAT,
-                                message,
-                                line + 1,
-                                fileElements.get(line).getLineContent(),
-                                script),
-                        type, line, ctx, error, script, tip
-                ));
-            }
+            logEntries.add(new LogEntry(message, type, line, ctx, error, script, tip));
         }
     }
 
