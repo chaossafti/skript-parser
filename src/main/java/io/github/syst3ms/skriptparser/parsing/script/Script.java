@@ -2,7 +2,6 @@ package io.github.syst3ms.skriptparser.parsing.script;
 
 import io.github.syst3ms.skriptparser.lang.SyntaxElement;
 import io.github.syst3ms.skriptparser.lang.Trigger;
-import io.github.syst3ms.skriptparser.log.LogEntry;
 import io.github.syst3ms.skriptparser.log.SkriptLogger;
 import io.github.syst3ms.skriptparser.parsing.ScriptLoader;
 import org.jetbrains.annotations.ApiStatus;
@@ -42,15 +41,13 @@ public class Script {
 
     }
 
-    public Set<LogEntry> reload() {
+    public ScriptLoadResult reload() {
         if(isLoaded) {
             unload();
         }
 
         SkriptLogger logger = new SkriptLogger();
-        ScriptLoader.loadScript(this, logger);
-
-        return Set.of(logger.close().toArray(new LogEntry[0]));
+        return ScriptLoader.loadScript(this, logger);
 
     }
 
