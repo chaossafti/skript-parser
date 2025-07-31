@@ -45,12 +45,22 @@ public class ScriptLoader {
     /**
      * Loads a Script. If the given script is already loaded, it will simply return without loading again
      *
-     * @param path  The path to the script
-     * @param debug flag if debug mode should be used.
+     * @param path The path to the script
      * @return The ScriptLoadResult, containing the script and the logs.
      */
     public static ScriptLoadResult loadScript(@NotNull Path path, boolean debug) {
-        var logger = new SkriptLogger(debug);
+        return loadScript(path, new ParseOptions().debug(debug));
+    }
+
+    /**
+     * Loads a Script. If the given script is already loaded, it will simply return without loading again
+     *
+     * @param path  The path to the script
+     * @param options flag if debug mode should be used.
+     * @return The ScriptLoadResult, containing the script and the logs.
+     */
+    public static ScriptLoadResult loadScript(@NotNull Path path, ParseOptions options) {
+        var logger = new SkriptLogger(options.isDebug());
 
         Script script;
         // make sure we don't have a script at the path already loaded
@@ -109,21 +119,41 @@ public class ScriptLoader {
     }
 
     /**
-     * Loads FileElements into a script. This is only possible if the script is unloaded.
-     * Instead of using this method, you should use {@link Script#reload()} or {@link #getOrLoadScript(Path, boolean)}
+     * Creates a list of {@link FileElement} taken from the script argument.
      *
-     * @param script   The script to load the elements into
-     * @param elements The elements to load into the script.
-     * @return a ScriptLoadResult containing the Script as well as all lgs
-     * @see Script#reload()
-     * @see #getOrLoadScript(Path, boolean)
+     * @param script The script to extract FileElements out of
+     * @param logger The logger to log to
+     * @return A list containing FileElements that can be extracted from the script
      */
-    public static ScriptLoadResult loadScript(@NotNull Script script, @NotNull List<FileElement> elements, SkriptLogger logger) {
-        if(script.isLoaded()) {
-            throw new IllegalStateException("Tried loading elements into a loaded script file!");
+    public static List<FileElement> parseLines(@NotNull Script script, SkriptLogger logger) {
+        // read the file and parse the elements
+        List<String> lines;
+
+        // read the liens within the file
+        try {
+            lines = FileUtils.readAllLines(script.getPath());
+        } catch (IOException e) {
+            e.printStackTrace();
+            return List.of();
         }
 
-        logger.setFileInfo(script, elements);
+        // parse the lines into FileElements
+
+        return FileParser.parseFileLines(script.getName(),
+                lines,
+                0,
+                1,
+                logger
+        );
+    }
+
+
+    /**
+     * @param elements The elements that have already been loaded
+     * @param logger The logger
+     * @return A list containing all unloaded triggers found in the script.
+     */
+    public static List<UnloadedTrigger> parseScriptCold(@NotNull List<FileElement> elements, SkriptLogger logger) {
         List<UnloadedTrigger> unloadedTriggers = new ArrayList<>();
 
 
@@ -146,12 +176,20 @@ public class ScriptLoader {
             });
         }
 
-        // sort to assure triggers are loaded in order
+        return unloadedTriggers;
+    }
+
+    /**
+     * @param unloadedTriggers The triggers to load
+     * @param logger The logger to log to
+     * @param activate Decides if parsed events should be registered to the GlobalEventManager
+     * @return a set of loaded triggers
+     */
+    public static Set<Trigger> loadTriggers(List<UnloadedTrigger> unloadedTriggers, SkriptLogger logger, boolean activate) {
         unloadedTriggers.sort((a, b) -> b.getTrigger().getEvent().getLoadingPriority() - a.getTrigger().getEvent().getLoadingPriority());
 
         // loops all the structures/events inside the file
         for (UnloadedTrigger unloaded : unloadedTriggers) {
-            // resets logger
             logger.setLine(unloaded.getLine());
 
             // gets the trigger, the object holding the code of the structure
@@ -159,21 +197,45 @@ public class ScriptLoader {
             unloaded.getParserState().setCurrentEvent(loaded.getEvent());
             loaded.loadSection(unloaded.getSection(), unloaded.getParserState(), logger);
 
-            // Why does the addon handle trigger handling???
-            // what's the point of init method??
-            unloaded.getEventInfo().getRegisterer().handleTrigger(loaded);
+            if(activate) {
+                // Why does the addon handle trigger handling???
+                // what's the point of init method??
+                unloaded.getEventInfo().getRegisterer().handleTrigger(loaded);
+                loaded.getEvent().register(loaded, SkriptEventManager.GLOBAL_EVENT_MANAGER);
+            }
 
-            loaded.getEvent().register(loaded, SkriptEventManager.GLOBAL_EVENT_MANAGER);
         }
 
         // finally, load the script with its new set of triggers.
-        Set<Trigger> triggers = unloadedTriggers
+        return unloadedTriggers
                 .stream()
                 .map(UnloadedTrigger::getTrigger)
                 .collect(Collectors.toUnmodifiableSet());
+    }
 
+    /**
+     * Loads FileElements into a script. This is only possible if the script is unloaded.
+     * Instead of using this method, you should use {@link Script#reload()} or {@link #getOrLoadScript(Path, boolean)}
+     *
+     * @param script   The script to load the elements into
+     * @param elements The elements to load into the script.
+     * @return a ScriptLoadResult containing the Script as well as all lgs
+     * @see Script#reload()
+     * @see #getOrLoadScript(Path, boolean)
+     */
+    public static ScriptLoadResult loadScript(@NotNull Script script, @NotNull List<FileElement> elements, SkriptLogger logger) {
+        if(script.isLoaded()) {
+            throw new IllegalStateException("Tried loading elements into a loaded script file!");
+        }
+
+        logger.setFileInfo(script, elements);
+
+        // parse
+        List<UnloadedTrigger> unloadedTriggers = parseScriptCold(elements, logger);
+
+        // load
+        Set<Trigger> triggers = loadTriggers(unloadedTriggers, logger, true);
         script.load(triggers);
-
         return new ScriptLoadResult(logger.close(), script);
     }
 
